@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FB6A112E-8652-47CC-BDBD-F0FAC5EB44D0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinSysInfo.MiniFileParser</RootNamespace>
+    <AssemblyName>WinSysInfo.MiniFileParser</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Factory\FactoryFileReadStrategy.cs" />
+    <Compile Include="Factory\FileDataStoreFactory.cs" />
+    <Compile Include="Helper\BitConverterExtended.cs" />
+    <Compile Include="Helper\FilePathHelper.cs" />
+    <Compile Include="Helper\StringExHelper.cs" />
+    <Compile Include="Interface\IBinaryFileReader.cs" />
+    <Compile Include="Interface\IFileBrowser.cs" />
+    <Compile Include="Interface\IFileDataStore.cs" />
+    <Compile Include="Interface\IFileReaderProperty.cs" />
+    <Compile Include="Interface\IFileReadStrategy.cs" />
+    <Compile Include="Interface\IPECOFFFileReader.cs" />
+    <Compile Include="Model\Class\COFF\COFFFileDataStore.cs" />
+    <Compile Include="Model\Class\FileDataStore.cs" />
+    <Compile Include="Model\Class\COFF\COFFFileHeaderLayoutModel.cs" />
+    <Compile Include="Model\Class\COFF\COFFSectionTableList.cs" />
+    <Compile Include="Model\Class\COFF\COFFSymbolTableLayoutModel.cs" />
+    <Compile Include="Model\Class\COFF\LayoutModel.cs" />
+    <Compile Include="Model\Class\COFF\MSDOSStubLayoutModel.cs" />
+    <Compile Include="Model\Class\COFF\OptHeaderDataDirectoriesImageOnly.cs" />
+    <Compile Include="Model\Class\COFF\SymbolTableBigObjList.cs" />
+    <Compile Include="Model\Class\COFF\SymbolTableList.cs" />
+    <Compile Include="Model\Enum\Common\EnumReaderType.cs" />
+    <Compile Include="Model\Enum\Common\EnumFileType.cs" />
+    <Compile Include="Model\Enum\PE\EnumAuxSymbolType.cs" />
+    <Compile Include="Model\Enum\PE\EnumBaseRelocationType.cs" />
+    <Compile Include="Model\Enum\PE\EnumCodeViewIdentifiers.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFDllCharacteristics.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFFileType.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFHeaderCharacteristics.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFHeaderMachineTypes.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFSectionHeaderCharacteristics.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOFFSizes.cs" />
+    <Compile Include="Model\Enum\PE\EnumCOMDATType.cs" />
+    <Compile Include="Model\Enum\PE\EnumDataDirectoryEntryType.cs" />
+    <Compile Include="Model\Enum\PE\EnumDebugType.cs" />
+    <Compile Include="Model\Enum\PE\EnumFileDataType.cs" />
+    <Compile Include="Model\Enum\PE\EnumFileReaderType.cs" />
+    <Compile Include="Model\Enum\PE\EnumImportNameType.cs" />
+    <Compile Include="Model\Enum\PE\EnumImportType.cs" />
+    <Compile Include="Model\Enum\PE\EnumOptionalHeaderMagicNo.cs" />
+    <Compile Include="Model\Enum\PE\EnumPEStructureId.cs" />
+    <Compile Include="Model\Enum\PE\EnumPEType.cs" />
+    <Compile Include="Model\Enum\PE\EnumReaderLayoutType.cs" />
+    <Compile Include="Model\Enum\PE\EnumRelocationTypeAMD64.cs" />
+    <Compile Include="Model\Enum\PE\EnumRelocationTypeI386.cs" />
+    <Compile Include="Model\Enum\PE\EnumRelocationTypesARM.cs" />
+    <Compile Include="Model\Enum\PE\EnumSymbolBaseType.cs" />
+    <Compile Include="Model\Enum\PE\EnumSymbolComplexType.cs" />
+    <Compile Include="Model\Enum\PE\EnumSymbolSectionNumber.cs" />
+    <Compile Include="Model\Enum\PE\EnumSymbolStorageClass.cs" />
+    <Compile Include="Model\Enum\PE\EnumSymbolTypeMicrosoftTool.cs" />
+    <Compile Include="Model\Enum\PE\EnumWeakExternalCharacteristics.cs" />
+    <Compile Include="Model\Enum\PE\EnumWindowsSubsytem.cs" />
+    <Compile Include="Model\Stucture\PE\AttributeCertificateTableImageOnlyFormat.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliarybfAndefSymbolLayout.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliaryCLRTokenLayout.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliaryFileLayout.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliaryFunctionDefinitionLayout.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliarySectionDefinitionsLayout.cs" />
+    <Compile Include="Model\Stucture\PE\AuxiliaryWeakExternalLayout.cs" />
+    <Compile Include="Model\Stucture\PE\COFFBaseRelocBlockHeader.cs" />
+    <Compile Include="Model\Stucture\PE\COFFBigObjHeader.cs" />
+    <Compile Include="Model\Stucture\PE\COFFFileHeader.cs" />
+    <Compile Include="Model\Stucture\PE\COFFOptionalHeader.cs" />
+    <Compile Include="Model\Stucture\PE\COFFRelocationsObjectOnly.cs" />
+    <Compile Include="Model\Stucture\PE\COFFSectionTableLayout.cs" />
+    <Compile Include="Model\Stucture\PE\COFFSymbolTableBigObjLayout.cs" />
+    <Compile Include="Model\Stucture\PE\COFFSymbolTableLayout.cs" />
+    <Compile Include="Model\Stucture\PE\ConstantWinCOFFImage.cs" />
+    <Compile Include="Model\Stucture\PE\DelayImportDirectoryTableEntry.cs" />
+    <Compile Include="Model\Stucture\PE\ExportDirectoryTableEntry.cs" />
+    <Compile Include="Model\Stucture\PE\ImportDirectoryTableEntry.cs" />
+    <Compile Include="Model\Stucture\PE\ImportHeaderLayout.cs" />
+    <Compile Include="Model\Stucture\PE\ImportLookupTableEntry32.cs" />
+    <Compile Include="Model\Stucture\PE\MSDOSHeaderLayout.cs" />
+    <Compile Include="Model\Stucture\PE\MSDOSStubLayout.cs" />
+    <Compile Include="Model\Stucture\PE\NTHeaderLayout.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderDataDirImageOnly.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderStandardFields.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderStandardFields32.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderWindowsSpecificFields32.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderWindowsSpecificFields32Plus.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderWindowsSpecificFieldsCommon1.cs" />
+    <Compile Include="Model\Stucture\PE\OptionalHeaderWindowsSpecificFieldsCommon2.cs" />
+    <Compile Include="Process\COFF\COFFBinaryReader.cs" />
+    <Compile Include="Process\COFF\COFFFileBrowser.cs" />
+    <Compile Include="Factory\FileBrowserFactory.cs" />
+    <Compile Include="Process\FileLoader.cs" />
+    <Compile Include="Factory\FileTypeFactory.cs" />
+    <Compile Include="Process\FileReaderProperty.cs" />
+    <Compile Include="Process\MemorySequentialAccess.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
