@@ -56,6 +56,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public FileReaderProperty()
             : this(string.Empty
+            , EnumReaderBufferType.TEMP_FILE | EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR
             , EnumReaderType.BINARY_READER
             , 0
             , 0)
@@ -66,6 +67,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public FileReaderProperty(string fullFilePath)
             : this(fullFilePath
+            , EnumReaderBufferType.TEMP_FILE | EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR
             , EnumReaderType.BINARY_READER
             , 0
             , 0)
@@ -75,13 +77,14 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Default constructor
         /// </summary>
         public FileReaderProperty(string fullFilePath
+            , EnumReaderBufferType bufferType
             , EnumReaderType readerType
             , long offset
             , long size)
         {
-            this.BufferType = EnumReaderBufferType.TEMP_FILE | EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR;
+            this.BufferType = bufferType;
             this.FilePath = new FilePathHelper(fullFilePath);
-            this.FilePath.Rationalize(this.BufferType == EnumReaderBufferType.TEMP_FILE);
+            this.FilePath.Rationalize(this.BufferType.HasFlag(EnumReaderBufferType.TEMP_FILE));
 
             this.ReaderType = readerType;
             this.OffsetOfFile = offset;

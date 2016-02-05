@@ -68,14 +68,14 @@ namespace WinSysInfo.MiniFileParser.Helper
         }
 
         /// <summary>
-        /// The file name of the actual file
+        /// The file extension of the actual file without the strating dot
         /// </summary>
         public string Extension
         {
             get
             {
                 FileInfo fi = new FileInfo(this.ActualFile);
-                return fi.Extension;
+                return fi.Extension.Remove(0);
             }
         }
 
@@ -124,7 +124,7 @@ namespace WinSysInfo.MiniFileParser.Helper
         /// <param name="bForceTemp">Force use of temp file</param>
         public bool Rationalize(bool bForceTemp = false)
         {
-            if ((bForceTemp == true && string.IsNullOrEmpty(this.ActualFile) == true) ||
+            if ((bForceTemp == true || string.IsNullOrEmpty(this.ActualFile) == true) ||
                 (this.ActualFile.Length > FilePathHelper.MaxPath))
             {
                 // Create Temp file and use
