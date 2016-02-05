@@ -11,19 +11,16 @@ using WinSysInfo.MiniFileParser.Model;
 namespace WinSysInfo.MiniFileParser.Process
 {
     /// <summary>
-    /// Use this class to determine the type of file and the Reader to use
-    /// in case you are not sure and want the application to determine by
-    /// itself. It is adviced to use this class as much as possible rather
-    /// than using the File parser class directly.
+    /// Use this class to determine the type of file and the Reader to use in
+    /// case you are not sure and want the application to determine by itself.
+    /// It is adviced to use this class as much as possible than using the File
+    /// parser class directly.
+    /// At present this class determines the type of file from the file 
+    /// extension.
     /// </summary>
     public class FileLoader
     {
         #region Properties
-
-        /// <summary>
-        /// get or set the type of file
-        /// </summary>
-        public EnumFileType FileType { get; set; }
 
         /// <summary>
         /// Get or set the file parsing property
@@ -58,10 +55,7 @@ namespace WinSysInfo.MiniFileParser.Process
         public FileLoader(string fullFilePath, bool useTempLocation)
         {
             this.Property = new FileReaderProperty(fullFilePath);
-
-            this.FileType = FileTypeFactory.GetFileType(this.Property.FilePath.Extension);
-
-            this.Browser = FileBrowserFactory.GetFileBrowser(this.FileType, this.Property);
+            this.Browser = FileBrowserFactory.GetFileBrowser(this.Property);
         }
 
         #endregion Constructors
@@ -76,10 +70,7 @@ namespace WinSysInfo.MiniFileParser.Process
             if (this.Browser == null)
                 throw new ArgumentNullException("Browser", "No proper file browser is defined");
 
-            while(this.Browser.IsParseCompleted == false)
-            {
-                this.Browser = this.Browser.Read();
-            }
+            this.Browser.Read();
         }
 
         #endregion Methods

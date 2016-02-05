@@ -20,41 +20,37 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// Windows Executable format
         /// </summary>
-        PE = 1,
-
-        /// <summary>
-        /// Windows executable 32 bits
-        /// </summary>
-        PE32 = PE + 1,
-
-        /// <summary>
-        /// Windows executable 64 bits
-        /// </summary>
-        PE32PLUS = PE + 2,
+        /// <remarks>File extesnion .exe</remarks>
+        EXE = 1,
 
         /// <summary>
         /// A Dll file type
         /// </summary>
+        /// <remarks>File extension .dll</remarks>
         DLL = 10,
 
         /// <summary>
         /// An Obj file type
         /// </summary>
+        /// <remarks>File extesnion .obj</remarks>
         OBJ = 20,
 
         /// <summary>
         /// An xml file
         /// </summary>
+        /// <remarks>File extension .xml</remarks>
         XML = 40,
 
         /// <summary>
         /// Normal text file
         /// </summary>
+        /// <remarks>File extension .txt</remarks>
         TXT = 80,
 
         /// <summary>
         /// Windows Screensaver file
         /// </summary>
+        /// <remarks>File extension .scr</remarks>
         SCR = 100,
     }
 }

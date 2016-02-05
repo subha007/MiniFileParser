@@ -1,4 +1,10 @@
-﻿namespace WinSysInfo.MiniFileParser.Model
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WinSysInfo.MiniFileParser.Helper
 {
     /// <summary>
     /// This class defines all Constants used in PE image structures

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Interface;
+using WinSysInfo.MiniFileParser.Model;
+using WinSysInfo.MiniFileParser.Process;
 
 namespace WinSysInfo.MiniFileParser.Factory
 {
@@ -20,17 +22,10 @@ namespace WinSysInfo.MiniFileParser.Factory
         public static IFileReadStrategy Instance(IFileReaderProperty readerProperty)
         {
             IFileReadStrategy readStrategy = null;
-            switch (readerProperty.ReaderType)
+            switch (readerProperty.BufferType)
             {
-                case EnumFileReaderType.MEMORY_SEQ_READ:
+                case EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR:
                     readStrategy = new MemorySequentialAccess(readerProperty);
-                    break;
-
-                case EnumFileReaderType.MEMORY_ACCESSOR_READ:
-                    readStrategy = new MemoryRandomAccess(readerProperty);
-                    break;
-
-                case EnumFileReaderType.BINARY_READ:
                     break;
 
                 default:

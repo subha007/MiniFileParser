@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
 
 namespace WinSysInfo.MiniFileParser.Process
 {
-    public class MemorySequentialAccess : IFileReadStrategy, IDisposable
+    /// <summary>
+    /// Represents a randomly accessed view of a memory-mapped file
+    /// </summary>
+    public class MemoryRandomAccess : IFileReadStrategy, IDisposable
     {
         #region Main Properties
 
@@ -22,10 +23,9 @@ namespace WinSysInfo.MiniFileParser.Process
         private MemoryMappedFile MemoryFile { get; set; }
 
         /// <summary>
-        /// Use the stream returned by this method for sequential access to a memory-mapped file, 
-        /// such as for inter-process communications.
+        /// Represents a randomly accessed view of a memory-mapped file.
         /// </summary>
-        protected MemoryMappedViewStream IoAccess { get; set; }
+        protected MemoryMappedViewAccessor Accessor { get; set; }
 
         /// <summary>
         /// Reference to the Reader property passed from the file parser object
@@ -39,27 +39,15 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Basic constructor
         /// </summary>
-        /// <param name="memoryFile"></param>
-        public MemorySequentialAccess(IFileReaderProperty readerProperty)
+        /// <param name="readerProperty"></param>
+        public MemoryRandomAccess(IFileReaderProperty readerProperty)
         {
             if (readerProperty == null) throw new ArgumentNullException("readerProperty");
             if (readerProperty.TryValidate() == false) throw new InvalidOperationException("readerProperty has invalid data");
             this.ReaderProperty = readerProperty;
 
             this.MemoryFile = MemoryMappedFile.CreateFromFile(readerProperty.FilePath.FileInUse, FileMode.Open, readerProperty.FilePath.UniqueName);
-        }
-
-        #endregion
-
-        #region Private
-
-        /// <summary>
-        /// Set file offset
-        /// </summary>
-        /// <param name="offset"></param>
-        private void SetFileOffset(long offset)
-        {
-            this.IoAccess.Seek(offset, System.IO.SeekOrigin.Begin);
+            this.fileOffset = 0;
         }
 
         #endregion
@@ -67,17 +55,17 @@ namespace WinSysInfo.MiniFileParser.Process
         #region OpenClose
 
         /// <summary>
+        /// Get or set random access is open
+        /// </summary>
+        public bool IsOpen { get; set; }
+
+        /// <summary>
         /// Open the random accessor
         /// </summary>
         public void Open()
         {
-            if (this.ReaderProperty == null) throw new ArgumentNullException("The Reader property is null and must be initialized");
-
             if (this.IsOpen == false)
-                this.IoAccess = this.MemoryFile.CreateViewStream(
-                    ReaderProperty.OffsetOfFile
-                    , ReaderProperty.SizeOfReader
-                    , MemoryMappedFileAccess.Read);
+                this.Accessor = this.MemoryFile.CreateViewAccessor(this.ReaderProperty.OffsetOfFile, this.ReaderProperty.SizeOfReader);
 
             this.IsOpen = true;
         }
@@ -87,25 +75,20 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public void Close()
         {
-            if (this.IoAccess != null)
+            if (this.Accessor != null)
             {
-                this.IoAccess.Close();
-                this.IoAccess.Dispose();
-                this.IoAccess = null;
+                this.Accessor.Dispose();
+                this.Accessor = null;
             }
         }
 
         /// <summary>
-        /// Get or set random access is open
-        /// </summary>
-        public bool IsOpen { get; set; }
-
-        /// <summary>
         /// Get or set the file offset for which this intermediate reader is created
         /// </summary>
+        private long fileOffset;
         public long FileOffset
         {
-            get { return (this.IoAccess != null) ? this.IoAccess.Position : -1; }
+            get { return fileOffset; }
         }
 
         #endregion
@@ -113,23 +96,27 @@ namespace WinSysInfo.MiniFileParser.Process
         #region Peek
 
         /// <summary>
-        /// Peek ahead bytes but do not chnage the seek pointer in sequential access and read
-        /// independently of current file position
+        /// Peek ahead bytes but do not chnage the seek pointer in sequential access
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
         /// relative to the current position in the file. Default is 0</param>
-        /// <param name="count">The number of bytes to read. Default 1.</param>
+        /// <param name="count">The number of bytes to read. Default is 1.</param>
         /// <returns>A byte array</returns>
         public byte[] PeekBytes(int count = 1, long position = 0)
         {
-            if (position < 0) position = this.FileOffset;
-            using (MemoryMappedViewStream tempPeek =
-                this.MemoryFile.CreateViewStream(position, count, MemoryMappedFileAccess.Read))
+            MemoryMappedViewStream tempPeek = this.MemoryFile.CreateViewStream(position, count, MemoryMappedFileAccess.Read);
+
+            if (tempPeek != null && count > 0)
             {
                 byte[] iodata = new byte[count];
                 tempPeek.Read(iodata, (int)0, count);
+                tempPeek.Close();
+                tempPeek.Dispose();
+                tempPeek = null;
                 return iodata;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -144,10 +131,12 @@ namespace WinSysInfo.MiniFileParser.Process
         {
             LayoutModel<TLayoutType> model = new LayoutModel<TLayoutType>();
 
-            using (MemoryMappedViewStream tempPeek = this.MemoryFile.CreateViewStream(position,
+            using (MemoryMappedViewAccessor tempPeek = this.MemoryFile.CreateViewAccessor(position,
                 count, MemoryMappedFileAccess.Read))
             {
-                MemorySequentialAccess.ReadLayoutHelper(tempPeek, model, position);
+                TLayoutType fileData;
+                tempPeek.Read(position, out fileData);
+                model.SetData(fileData);
             }
 
             return model;
@@ -186,7 +175,7 @@ namespace WinSysInfo.MiniFileParser.Process
         public void SeekForward(long position)
         {
             // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
+
         }
 
         /// <summary>
@@ -196,12 +185,12 @@ namespace WinSysInfo.MiniFileParser.Process
         public void SeekOriginal(long position)
         {
             // Seek Position from origin
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Begin);
+
         }
 
         #endregion Seek
 
-        #region Reader With Position
+        #region Reader
 
         /// <summary>
         /// Read a layout model
@@ -222,31 +211,18 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Read a layout model
         /// </summary>
-        /// <typeparam name="TLayoutType">The Layout Model value Type</typeparam>
+        /// <typeparam name="T">The Layout Model value Type</typeparam>
         /// <param name="position">The position in the file at which to begin reading
         /// relative to the current position in the file. Default is 0</param>
         /// <param name="model">The structure to contain the read data</param>
-        public void ReadLayout<TLayoutType>(LayoutModel<TLayoutType> model, long position = 0)
+        public void ReadLayout<TLayoutType>(LayoutModel<TLayoutType> model, long position)
             where TLayoutType : struct
         {
-            MemorySequentialAccess.ReadLayoutHelper(this.IoAccess, model, position);
-        }
-
-        private static void ReadLayoutHelper<TLayoutType>(MemoryMappedViewStream viewStream
-            , LayoutModel<TLayoutType> model
-            , long position = 0)
-            where TLayoutType : struct
-        {
-            if (viewStream != null)
+            if (this.Accessor != null)
             {
-                // Seek Position from current
-                viewStream.Seek(position, System.IO.SeekOrigin.Current);
-
-                byte[] bytes = ReadBytes(viewStream, (int)LayoutModel<TLayoutType>.DataSize, position);
-
-                GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-                model.SetData(Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TLayoutType)));
-                handle.Free();
+                TLayoutType fileData;
+                this.Accessor.Read<TLayoutType>(position, out fileData);
+                model.SetData(fileData);
             }
         }
 
@@ -254,42 +230,15 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Read bytes
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <param name="count">The number of bytes to read. Default is 1.</param>
         /// <returns>A byte array</returns>
         public byte[] ReadBytes(int count = 1, long position = 0)
         {
-            if (this.IoAccess != null && count > 0)
+            if (this.Accessor != null && count > 0)
             {
-                // Seek Position from current
-                this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
                 byte[] iodata = new byte[count];
-                this.IoAccess.Read(iodata, (int)0, count);
-                return iodata;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Read bytes
-        /// </summary>
-        /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
-        /// <param name="viewStream"></param>
-        /// <param name="count">The number of bytes to read. Default is 1.</param>
-        /// <returns>A byte array</returns>
-        private static byte[] ReadBytes(MemoryMappedViewStream viewStream,
-            int count = 1, long position = 0)
-        {
-            if (viewStream != null && count > 0)
-            {
-                // Seek Position from current
-                viewStream.Seek(position, System.IO.SeekOrigin.Current);
-
-                byte[] iodata = new byte[count];
-                viewStream.Read(iodata, (int)0, count);
+                this.Accessor.ReadArray(position, iodata, (int)0, count);
                 return iodata;
             }
 
@@ -300,17 +249,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Read boolean data
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public bool? ReadBoolean(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(1, position);
-            if (iodata != null)
-                return BitConverter.ToBoolean(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadBoolean(position);
             return null;
         }
 
@@ -318,17 +262,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a byte value from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public byte? ReadByte(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(1, position);
-            if (iodata != null)
-                return iodata[0];
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadByte(position);
             return null;
         }
 
@@ -336,17 +275,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a character from the accessor.
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public char? ReadChar(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(1, position);
-            if (iodata != null)
-                return BitConverter.ToChar(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadChar(position);
             return null;
         }
 
@@ -354,17 +288,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a decimal value from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public decimal? ReadDecimal(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(16, position);
-            if (iodata != null)
-                return BitConverterExtended.ToDecimal(iodata);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadDecimal(position);
             return null;
         }
 
@@ -372,17 +301,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a double-precision floating-point value from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public double? ReadDouble(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(8, position);
-            if (iodata != null)
-                return BitConverter.ToDouble(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadDouble(position);
             return null;
         }
 
@@ -390,17 +314,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a 16-bit integer from the accessor.
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public short? ReadInt16(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(2, position);
-            if (iodata != null)
-                return BitConverter.ToInt16(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadInt16(position);
             return null;
         }
 
@@ -408,17 +327,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a 32-bit integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public int? ReadInt32(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(4, position);
-            if (iodata != null)
-                return BitConverter.ToInt32(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadInt32(position);
             return null;
         }
 
@@ -426,17 +340,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a 64-bit integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public long? ReadInt64(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(8, position);
-            if (iodata != null)
-                return BitConverter.ToInt64(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadInt64(position);
             return null;
         }
 
@@ -444,17 +353,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads an 8-bit signed integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public sbyte? ReadSByte(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(1, position);
-            if (iodata != null)
-                return Convert.ToSByte(iodata[0]);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadSByte(position);
             return null;
         }
 
@@ -462,17 +366,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads a single-precision floating-point value from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public float? ReadSingle(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(4, position);
-            if (iodata != null)
-                return BitConverter.ToSingle(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadSingle(position);
             return null;
         }
 
@@ -480,17 +379,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads an unsigned 16-bit integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public ushort? ReadUInt16(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(2, position);
-            if (iodata != null)
-                return BitConverter.ToUInt16(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadUInt16(position);
             return null;
         }
 
@@ -498,17 +392,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads an unsigned 32-bit integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public uint? ReadUInt32(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(4, position);
-            if (iodata != null)
-                return BitConverter.ToUInt32(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadUInt32(position);
             return null;
         }
 
@@ -516,17 +405,12 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Reads an unsigned 64-bit integer from the accessor
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
+        /// relative to the current position in the file. Default is 0.</param>
         /// <returns>The value that was read or null if cannot read.</returns>
         public ulong? ReadUInt64(long position = 0)
         {
-            // Seek Position from current
-            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
-
-            byte[] iodata = ReadBytes(4, position);
-            if (iodata != null)
-                return BitConverter.ToUInt64(iodata, 0);
-
+            if (this.Accessor != null)
+                return this.Accessor.ReadUInt64(position);
             return null;
         }
 
@@ -537,7 +421,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Destructor
         /// </summary>
-        ~MemorySequentialAccess()
+        ~MemoryRandomAccess()
         {
             Dispose(false);
         }

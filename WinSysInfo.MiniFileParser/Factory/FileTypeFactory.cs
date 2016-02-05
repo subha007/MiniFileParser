@@ -23,21 +23,7 @@ namespace WinSysInfo.MiniFileParser.Factory
             if (StringExHelper.IsNullOrEmptyOrWhiteSpace(extension) == true)
                 throw new ArgumentNullException("Extesnion", "File extesnion cannot be null.");
 
-            switch(extension.ToLower())
-            {
-                case "txt":
-                    return EnumFileType.TXT;
-                case "exe":
-                    return EnumFileType.PE;
-                case "dll":
-                    return EnumFileType.DLL;
-                case "obj":
-                    return EnumFileType.OBJ;
-                case "scr":
-                    return EnumFileType.SCR;
-                default:
-                    return EnumFileType.NONE;
-            }
+            return EnumExHelper.GetValueOf<EnumFileType>(extension);
         }
     }
 }

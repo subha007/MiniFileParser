@@ -21,7 +21,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// The reader used to read the PE File 
         /// </summary>
-        protected IFileReadStrategy ReaderStrategy { get; set; }
+        public IFileReadStrategy ReaderStrategy { get; set; }
 
         /// <summary>
         /// Get or set the file parsing property
@@ -51,14 +51,14 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Default constructor
         /// </summary>
-        public COFFFileBrowser(FileReaderProperty fileProperty) : this(fileProperty, FileDataStoreFactory.COFFStore()) { }
+        public COFFFileBrowser(IFileReaderProperty fileProperty) : this(fileProperty, FileDataStoreFactory.COFFStore()) { }
 
         /// <summary>
         /// Constructor with fil path and data store
         /// </summary>
         /// <param name="fullFilePath"></param>
         /// <param name="store"></param>
-        public COFFFileBrowser(string fullFilePath, COFFFileDataStore store) 
+        public COFFFileBrowser(string fullFilePath, IFileDataStore store) 
             : this(new FileReaderProperty(fullFilePath), store)
         {
         }
@@ -68,7 +68,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="store"></param>
-        public COFFFileBrowser(FileReaderProperty fileProperty, COFFFileDataStore store) 
+        public COFFFileBrowser(IFileReaderProperty fileProperty, IFileDataStore store) 
         {
             this.Property = fileProperty;
             this.Store = store;
@@ -96,21 +96,12 @@ namespace WinSysInfo.MiniFileParser.Process
             if (File.Exists(this.Property.FilePath.FileInUse) == false)
                 throw new FileNotFoundException(this.Property.FilePath.FileInUse);
 
-            IBinaryFileReader reader = new COFFBinaryReader(this.Property, this.Store);
+            IBinaryFileReader reader = new COFFBinaryReaderInternal(this.Property, this.Store, this.ReaderStrategy);
 
             if (reader == null)
                 throw new InvalidOperationException("Reader is not initialized");
 
-            Parse(reader);
-        }
-
-        /// <summary>
-        /// Start parsing of file
-        /// </summary>
-        /// <param name="reader"></param>
-        protected void Parse(IBinaryFileReader reader)
-        {
-            // Validate
+            reader.Read();
         }
 
         #endregion Methods

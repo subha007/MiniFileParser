@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
-    /// The layout of PE COFF file.
+    /// The layout of a COFF file.
     /// </summary>
     public class COFFFileDataStore : FileDataStore<EnumPEStructureId>
     {
+        #region Properties
+
         /// <summary>
         /// Check if it is PE Header
         /// </summary>
@@ -171,25 +173,10 @@ namespace WinSysInfo.MiniFileParser.Model
             }
         }
 
-        /// <summary>
-        /// Optional directory image
-        /// </summary>
-        internal LayoutModel<OptionalHeaderDataDirImageOnly> OptHDataDirImportTable
-        {
-            get
-            {
-                return this.GetData(EnumPEStructureId.OPT_HEADER_DATADIR_IMPORT_TABLE) as LayoutModel<OptionalHeaderDataDirImageOnly>;
-            }
-            set
-            {
-                this.SetData(EnumPEStructureId.OPT_HEADER_DATADIR_IMPORT_TABLE, value);
-            }
-        }
-
         internal uint NumberOfDataDirImageOnly { get; set; }
 
         /// <summary>
-        /// 
+        /// Optional directory image
         /// </summary>
         internal OptHeaderDataDirectoriesImageOnly OptHDataDirImages
         {
@@ -235,5 +222,7 @@ namespace WinSysInfo.MiniFileParser.Model
 
         internal uint NumberOfImportDirectory;
         internal uint NumberOfDelayImportDirectory;
+
+        #endregion Properties
     }
 }

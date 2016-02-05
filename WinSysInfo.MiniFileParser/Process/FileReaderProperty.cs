@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WinSysInfo.MiniFileParser.Factory;
 using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
@@ -20,6 +21,16 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Get or set the binary reader type
         /// </summary>
         public EnumReaderType ReaderType { get; set; }
+
+        /// <summary>
+        /// Get or set the type of file
+        /// </summary>
+        public EnumFileType FileType { get; protected set; }
+
+        /// <summary>
+        /// Get or set the buffer type
+        /// </summary>
+        public EnumReaderBufferType BufferType { get; set; }
 
         /// <summary>
         /// Get or set the file path
@@ -45,7 +56,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public FileReaderProperty()
             : this(string.Empty
-            , EnumReaderType.MEMORY_SEQ_ACCESS
+            , EnumReaderType.BINARY_READER
             , 0
             , 0)
         { }
@@ -55,7 +66,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public FileReaderProperty(string fullFilePath)
             : this(fullFilePath
-            , EnumReaderType.MEMORY_SEQ_ACCESS
+            , EnumReaderType.BINARY_READER
             , 0
             , 0)
         { }
@@ -68,12 +79,15 @@ namespace WinSysInfo.MiniFileParser.Process
             , long offset
             , long size)
         {
+            this.BufferType = EnumReaderBufferType.TEMP_FILE | EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR;
             this.FilePath = new FilePathHelper(fullFilePath);
-            this.FilePath.Rationalize();
+            this.FilePath.Rationalize(this.BufferType == EnumReaderBufferType.TEMP_FILE);
 
             this.ReaderType = readerType;
             this.OffsetOfFile = offset;
             this.SizeOfReader = size;
+
+            this.FileType = FileTypeFactory.GetFileType(this.FilePath.Extension);
         }
 
         #endregion Constructors

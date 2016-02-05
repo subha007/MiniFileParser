@@ -16,9 +16,21 @@ namespace WinSysInfo.MiniFileParser.Interface
         #region Properties
 
         /// <summary>
-        /// Get or set the binary reader type
+        /// Get or set the file reader type.
+        /// Either set manually or
+        /// It internally uses 
         /// </summary>
         EnumReaderType ReaderType { get; set; }
+
+        /// <summary>
+        /// Get or set the type of file
+        /// </summary>
+        EnumFileType FileType { get; }
+
+        /// <summary>
+        /// Get or set the buffer type
+        /// </summary>
+        EnumReaderBufferType BufferType { get; set; }
 
         /// <summary>
         /// Get or set the file path

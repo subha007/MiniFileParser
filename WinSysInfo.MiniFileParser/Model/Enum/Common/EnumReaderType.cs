@@ -12,9 +12,12 @@ namespace WinSysInfo.MiniFileParser.Model
     public enum EnumReaderType
     {
         BINARY_READER = 1,
-        STREAM = 2,
-        FILE_STREAM = 3,
-        MEMORY_SEQ_ACCESS = 4,
-        MEMORY_RANDOM_ACCESS = 5
+        TEXT_READER = 2,
+        XML_READER = 3,
+        XML_TEXT_READER = 4,
+        XML_DOCUMENT_READER = 5,
+        STREAM_READER = 6,
+        FILE_STREAM = 7,
+        MEMORY_MAPPED_VIEW_ACCESSOR = 8,
     }
 }

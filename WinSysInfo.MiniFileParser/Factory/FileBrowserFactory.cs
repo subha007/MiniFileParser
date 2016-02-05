@@ -14,11 +14,11 @@ namespace WinSysInfo.MiniFileParser.Factory
     /// </summary>
     public class FileBrowserFactory
     {
-        public static IFileBrowser GetFileBrowser(EnumFileType fileType, FileReaderProperty fileProperty)
+        public static IFileBrowser GetFileBrowser(IFileReaderProperty fileProperty)
         {
-            switch(fileType)
+            switch (fileProperty.FileType)
             {
-                case EnumFileType.PE:
+                case EnumFileType.EXE:
                     return new COFFFileBrowser(fileProperty);
 
                 default:
