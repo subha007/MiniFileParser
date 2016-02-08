@@ -61,9 +61,9 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Constructor using Direct file path data and store
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="fileProperty"></param>
         /// <param name="store"></param>
-        public COFFFileBrowser(IFileReaderProperty fileProperty, IFileDataStore store) 
+        public COFFFileBrowser(IFileReaderProperty fileProperty, IFileDataStore store)
         {
             this.Property = fileProperty;
             this.Store = store;

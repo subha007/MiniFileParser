@@ -1,4 +1,7 @@
-﻿namespace WinSysInfo.MiniFileParser.Model
+﻿using System.Linq;
+using WinSysInfo.MiniFileParser.Helper;
+
+namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// The layout of a COFF file.
@@ -6,16 +9,6 @@
     public class COFFFileDataStore : FileDataStore<EnumPEStructureId>
     {
         #region Properties
-
-        /// <summary>
-        /// Check if it is PE Header
-        /// </summary>
-        public bool HasPEHeader { get; set; }
-
-        /// <summary>
-        /// Checks if the COFF file header is present or not
-        /// </summary>
-        public bool IsCOFFFileHeader { get; set; }
 
         /// <summary>
         /// The PE DOS Header.
@@ -34,6 +27,27 @@
                 this.SetData(EnumPEStructureId.MSDOS_HEADER, value);
             }
         }
+
+        /// <summary>
+        /// Check if the MSDOS header Magic data is the PE Header
+        /// This check can only be performed after the <see cref="MsDosHeader"/> data object is
+        /// filled. Else it will always return false.
+        /// </summary>
+        public bool HasPEHeader
+        {
+            get
+            {
+                LayoutModel<MSDOSHeaderLayout> msDosHeader = this.MsDosHeader;
+                if (msDosHeader != null)
+                    return msDosHeader.Data.Magic.SequenceEqual(ConstantWinCOFFImage.MSDOSMagic);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the COFF file header is present or not
+        /// </summary>
+        public bool IsCOFFFileHeader { get; set; }
 
         /// <summary>
         /// The DOS stub usually just prints a string, something like the message.

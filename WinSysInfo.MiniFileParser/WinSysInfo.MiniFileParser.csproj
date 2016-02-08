@@ -34,10 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>WinSysInfo.MiniFileParser.Sign.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -64,9 +65,6 @@
     <Compile Include="Interface\IFileReadStrategy.cs" />
     <Compile Include="Interface\IPECOFFFileReader.cs" />
     <Compile Include="Model\Class\COFF\COFFFileDataStore.cs" />
-    <Compile Include="Model\Class\COFF\DelayImportDirectoryEntry.cs" />
-    <Compile Include="Model\Class\COFF\ImportDirectoryEntry.cs" />
-    <Compile Include="Model\Class\COFF\ImportDirectoryEntryList.cs" />
     <Compile Include="Model\Class\COFF\OptionalHeaderDataDirImageOnlyLayoutModel.cs" />
     <Compile Include="Model\Class\FileDataStore.cs" />
     <Compile Include="Model\Class\COFF\COFFFileHeaderLayoutModel.cs" />
@@ -124,7 +122,6 @@
     <Compile Include="Model\Stucture\COFF\COFFSectionTableLayout.cs" />
     <Compile Include="Model\Stucture\COFF\COFFSymbolTableBigObjLayout.cs" />
     <Compile Include="Model\Stucture\COFF\COFFSymbolTableLayout.cs" />
-    <Compile Include="Model\Class\COFF\DelayImportDirectoryEntryList.cs" />
     <Compile Include="Model\Stucture\COFF\DelayImportDirectoryTableEntry.cs" />
     <Compile Include="Model\Stucture\COFF\ExportDirectoryTableEntry.cs" />
     <Compile Include="Model\Stucture\COFF\ImportDirectoryTableEntry.cs" />
@@ -149,9 +146,6 @@
     <Compile Include="Process\MemoryRandomAccess.cs" />
     <Compile Include="Process\MemorySequentialAccess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WinSysInfo.MiniFileParser.Sign.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,12 +5,6 @@
         #region Methods
 
         /// <summary>
-        /// Check if the file has PE signature
-        /// </summary>
-        /// <returns></returns>
-        void CheckPEHeader();
-
-        /// <summary>
         /// Read MS DOS Header
         /// </summary>
         void ReadMSDOSHeader();
@@ -85,7 +79,6 @@
         void CalculateNumberOfSymbols();
         void ReadSymbolTablePointer();
 
-        void InitDataDirTableEntryPointer();
         uint GetSectionTableRvaPointer(uint Addr);
 
         #endregion Methods

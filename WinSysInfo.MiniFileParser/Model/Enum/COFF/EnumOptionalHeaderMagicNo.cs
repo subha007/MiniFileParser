@@ -6,8 +6,8 @@
     /// </summary>
     public enum EnumOptionalHeaderMagicNo : ushort
     {
-        PE32 = 0x10b,
-        PE32Plus = 0x20b,
-        ROMIMage = 0x107
+        IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b,
+        IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b,
+        IMAGE_ROM_OPTIONAL_HDR_MAGIC = 0x107
     }
 }

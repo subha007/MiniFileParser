@@ -41,7 +41,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// relocation is applied; for simplicity, compilers should set this to zero. Otherwise, it is an arbitrary
         /// value that is subtracted from offsets during relocation
         /// </summary>
-        public uint VirtualAddress;
+        public uint RelativeVirtualAddress;
 
         /// <summary>
         /// The size of the section (for object files) or the size of the initialized data on disk (for image files).

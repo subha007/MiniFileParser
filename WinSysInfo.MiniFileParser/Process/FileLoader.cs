@@ -19,7 +19,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Get or set the file parsing property
         /// </summary>
-        public FileReaderProperty Property { get; set; }
+        public IFileReaderProperty Property { get; set; }
 
         /// <summary>
         /// The File browser
