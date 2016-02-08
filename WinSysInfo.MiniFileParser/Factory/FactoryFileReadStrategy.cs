@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
 using WinSysInfo.MiniFileParser.Process;
@@ -22,15 +18,11 @@ namespace WinSysInfo.MiniFileParser.Factory
         public static IFileReadStrategy Instance(IFileReaderProperty readerProperty)
         {
             IFileReadStrategy readStrategy = null;
-            switch (readerProperty.BufferType)
-            {
-                case EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR:
-                    readStrategy = new MemorySequentialAccess(readerProperty);
-                    break;
 
-                default:
-                    throw new NotImplementedException("Unreachable code");
-            }
+            if(readerProperty.BufferType.HasFlag(EnumReaderBufferType.MEMORY_MAPPED_VIEW_ACCESSOR))
+                readStrategy = new MemorySequentialAccess(readerProperty);
+            else
+                throw new NotImplementedException("Unreachable code");
 
             return readStrategy;
         }

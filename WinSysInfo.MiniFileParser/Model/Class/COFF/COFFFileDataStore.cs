@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinSysInfo.MiniFileParser.Model
+﻿namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// The layout of a COFF file.
@@ -21,13 +15,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// Checks if the COFF file header is present or not
         /// </summary>
-        public bool IsCOFFFileHeader
-        {
-            get
-            {
-                return (this.CoffFileHeader != null);
-            }
-        }
+        public bool IsCOFFFileHeader { get; set; }
 
         /// <summary>
         /// The PE DOS Header.
@@ -220,8 +208,20 @@ namespace WinSysInfo.MiniFileParser.Model
             }
         }
 
-        internal uint NumberOfImportDirectory;
-        internal uint NumberOfDelayImportDirectory;
+        internal LayoutModel<ImportDirectoryTableEntry> ImportDataDir
+        {
+            get
+            {
+                return this.GetData(EnumPEStructureId.IMPORT_DIR_TABLE_ENTRY) as LayoutModel<ImportDirectoryTableEntry>;
+            }
+            set
+            {
+                this.SetData(EnumPEStructureId.IMPORT_DIR_TABLE_ENTRY, value);
+            }
+        }
+
+        internal uint NumberOfImportDirectory = 0;
+        internal uint NumberOfDelayImportDirectory = 0;
 
         #endregion Properties
     }

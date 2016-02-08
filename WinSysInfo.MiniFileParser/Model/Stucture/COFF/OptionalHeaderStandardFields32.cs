@@ -13,6 +13,6 @@ namespace WinSysInfo.MiniFileParser.Model
         /// The address that is relative to the image base of the beginning-of-data
         /// section when it is loaded into memory
         /// </summary>
-        public uint BaseOfData { get; set; }
+        public uint BaseOfData;
     }
 }

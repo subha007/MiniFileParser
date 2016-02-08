@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using WinSysInfo.MiniFileParser.Model;
 
 namespace WinSysInfo.MiniFileParser.Interface
 {

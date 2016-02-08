@@ -15,35 +15,35 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// The unsigned integer that identifies the state of the image file.
         /// </summary>
-        public EnumOptionalHeaderMagicNo Magic { get; set; }
+        public EnumOptionalHeaderMagicNo Magic;
 
         /// <summary>
         /// The linker major version number
         /// </summary>
-        public byte MajorLinkerVersion { get; set; }
+        public byte MajorLinkerVersion;
 
         /// <summary>
         /// The linker minor version number
         /// </summary>
-        public byte MinorLinkerVersion { get; set; }
+        public byte MinorLinkerVersion;
 
         /// <summary>
         /// The size of the code (text) section, or the sum of all code sections
         /// if there are multiple sections
         /// </summary>
-        public uint SizeOfCode { get; set; }
+        public uint SizeOfCode;
 
         /// <summary>
         /// The size of the initialized data section, or the sum of all such 
         /// sections if there are multiple data sections
         /// </summary>
-        public uint SizeOfInitializedData { get; set; }
+        public uint SizeOfInitializedData;
 
         /// <summary>
         /// The size of the uninitialized data section (BSS), or the sum of all
         /// such sections if there are multiple BSS sections
         /// </summary>
-        public uint SizeOfUninitializedData { get; set; }
+        public uint SizeOfUninitializedData;
 
         /// <summary>
         /// The address of the entry point relative to the image base when the 
@@ -52,12 +52,12 @@ namespace WinSysInfo.MiniFileParser.Model
         /// the initialization function. An entry point is optional for DLLs. 
         /// When no entry point is present, this field must be zero
         /// </summary>
-        public uint AddressOfEntryPoint { get; set; }
+        public uint AddressOfEntryPoint;
 
         /// <summary>
         /// The address that is relative to the image base of the beginning-of-code 
         /// section when it is loaded into memory
         /// </summary>
-        public uint BaseOfCode { get; set; }
+        public uint BaseOfCode;
     }
 }

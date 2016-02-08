@@ -16,11 +16,11 @@ namespace WinSysInfo.MiniFileParser.Model
         /// The RVA is the address of the table relative to the base address 
         /// of the image when the table is loaded
         /// </summary>
-        public uint RelativeVirtualAddress { get; set; }
+        public uint RelativeVirtualAddress;
 
         /// <summary>
         /// The second field gives the size in bytes. 
         /// </summary>
-        public uint Size { get; set; }
+        public uint Size;
     }
 }

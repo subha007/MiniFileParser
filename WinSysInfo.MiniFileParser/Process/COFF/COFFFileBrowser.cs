@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Factory;
 using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
-using WinSysInfo.MiniFileParser.Model;
 
 namespace WinSysInfo.MiniFileParser.Process
 {
@@ -96,7 +91,7 @@ namespace WinSysInfo.MiniFileParser.Process
             if (File.Exists(this.Property.FilePath.FileInUse) == false)
                 throw new FileNotFoundException(this.Property.FilePath.FileInUse);
 
-            IBinaryFileReader reader = new COFFBinaryReaderInternal(this.Property, this.Store, this.ReaderStrategy);
+            IFileReader reader = new COFFBinaryReaderInternal(this.Property, this.Store, this.ReaderStrategy);
 
             if (reader == null)
                 throw new InvalidOperationException("Reader is not initialized");

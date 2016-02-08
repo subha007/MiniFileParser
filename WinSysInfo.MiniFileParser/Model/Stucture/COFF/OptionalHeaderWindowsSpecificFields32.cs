@@ -18,38 +18,38 @@ namespace WinSysInfo.MiniFileParser.Model
         /// The default for Windows NT, Windows 2000, Windows XP, Windows 95,
         /// Windows 98, and Windows Me is 0x00400000
         /// </summary>
-        public uint ImageBase { get; set; }
+        public uint ImageBase;
 
         /// <summary>
         /// Common for 32 and 32+ format
         /// </summary>
-        public OptionalHeaderWindowsSpecificFieldsCommon1 CommonData1 { get; set; }
+        public OptionalHeaderWindowsSpecificFieldsCommon1 CommonData1;
 
         /// <summary>
         /// The size of the stack to reserve. Only SizeOfStackCommit is committed; 
         /// the rest is made available one page at a time until the reserve size is reached
         /// </summary>
-        public uint SizeOfStackReserve { get; set; }
+        public uint SizeOfStackReserve;
 
         /// <summary>
         /// The size of the stack to commit.
         /// </summary>
-        public uint SizeOfStackCommit { get; set; }
+        public uint SizeOfStackCommit;
 
         /// <summary>
         /// The size of the local heap space to reserve. Only SizeOfHeapCommit is committed;
         /// the rest is made available one page at a time until the reserve size is reached
         /// </summary>
-        public uint SizeOfHeapReserve { get; set; }
+        public uint SizeOfHeapReserve;
 
         /// <summary>
         /// The size of the local heap space to commit
         /// </summary>
-        public uint SizeOfHeapCommit { get; set; }
+        public uint SizeOfHeapCommit;
 
         /// <summary>
         /// Common for 32 and 32+ format
         /// </summary>
-        public OptionalHeaderWindowsSpecificFieldsCommon2 CommonData2 { get; set; }
+        public OptionalHeaderWindowsSpecificFieldsCommon2 CommonData2;
     }
 }

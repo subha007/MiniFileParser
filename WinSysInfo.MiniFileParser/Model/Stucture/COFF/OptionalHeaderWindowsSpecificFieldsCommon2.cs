@@ -11,12 +11,12 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// Reserved, must be zero
         /// </summary>
-        public uint LoaderFlags { get; set; }
+        public uint LoaderFlags;
 
         /// <summary>
         /// The number of data-directory entries in the remainder of the optional header. 
         /// Each describes a location and size
         /// </summary>
-        public uint NumberOfRvaAndSizes { get; set; }
+        public uint NumberOfRvaAndSizes;
     }
 }

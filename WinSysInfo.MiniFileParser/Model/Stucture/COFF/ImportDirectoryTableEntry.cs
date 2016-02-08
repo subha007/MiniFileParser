@@ -9,10 +9,10 @@ namespace WinSysInfo.MiniFileParser.Model
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ImportDirectoryTableEntry
     {
-        public uint ImportLookupTableRVA { get; set; }
-        public uint TimeDateStamp { get; set; }
-        public uint ForwarderChain { get; set; }
-        public uint NameRVA { get; set; }
-        public uint ImportAddressTableRVA { get; set; }
+        public uint ImportLookupTableRVA;
+        public uint TimeDateStamp;
+        public uint ForwarderChain;
+        public uint NameRVA;
+        public uint ImportAddressTableRVA;
     }
 }

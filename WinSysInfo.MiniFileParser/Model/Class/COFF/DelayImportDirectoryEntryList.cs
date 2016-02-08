@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinSysInfo.MiniFileParser.Interface
+namespace WinSysInfo.MiniFileParser.Model
 {
-    public interface IBinaryFileReader
+    public class DelayImportDirectoryEntryList : List<DelayImportDirectoryEntry>
     {
-        bool Read();
     }
 }

@@ -59,7 +59,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <returns></returns>
         public static long GetOffset(string fieldName)
         {
-            IntPtr offset = Marshal.OffsetOf(typeof(TLayoutType), fieldName);
+            IntPtr offset = Marshal.OffsetOf<TLayoutType>(fieldName);
             return offset.ToInt64();
         }
 

@@ -1,31 +1,30 @@
-﻿namespace WinSysInfo.MiniFileParser.Model
+﻿using System.Runtime.InteropServices;
+
+namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// This auxiliary symbol generally follows the IMAGE_SYM_CLASS_CLR_TOKEN. It is used to
     /// associate a token with the COFF symbol table’s namespace
     /// </summary>
-    public class AuxiliaryCLRTokenLayout
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct AuxiliaryCLRTokenLayout
     {
         /// <summary>
         /// Must be IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF (1).
         /// </summary>
-        public EnumAuxSymbolType AuxType { get; set; }
+        public EnumAuxSymbolType AuxType;
 
         /// <summary>
         /// Reserved, must be zero.
         /// </summary>
-        public byte Reserved1 { get; set; }
+        public byte Reserved1;
 
         /// <summary>
         /// The symbol index of the COFF symbol to which this CLR token definition refers.
         /// </summary>
-        public uint SymbolTableIndex { get; set; }
+        public uint SymbolTableIndex;
 
-        private char[] unused = new char[12];
-        public char[] Unused
-        {
-            get { return this.unused; }
-            set { this.unused = value; }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        private char[] unused;
     }
 }

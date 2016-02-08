@@ -15,7 +15,7 @@ namespace WinSysInfo.MiniFileParser.Model
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ImportLookupTableEntry32
     {
-        public uint Data { get; set; }
+        public uint Data;
 
         /// <summary>
         /// Is this entry specified by ordinal, or name?

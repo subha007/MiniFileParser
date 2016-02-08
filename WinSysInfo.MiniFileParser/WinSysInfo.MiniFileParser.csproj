@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WinSysInfo.MiniFileParser</RootNamespace>
     <AssemblyName>WinSysInfo.MiniFileParser</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\WinSysInfo.MiniFileParser.XML</DocumentationFile>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +32,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>WinSysInfo.MiniFileParser.Sign.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,13 +57,17 @@
     <Compile Include="Helper\EnumExHelper.cs" />
     <Compile Include="Helper\FilePathHelper.cs" />
     <Compile Include="Helper\StringExHelper.cs" />
-    <Compile Include="Interface\IBinaryFileReader.cs" />
+    <Compile Include="Interface\IFileReader.cs" />
     <Compile Include="Interface\IFileBrowser.cs" />
     <Compile Include="Interface\IFileDataStore.cs" />
     <Compile Include="Interface\IFileReaderProperty.cs" />
     <Compile Include="Interface\IFileReadStrategy.cs" />
     <Compile Include="Interface\IPECOFFFileReader.cs" />
     <Compile Include="Model\Class\COFF\COFFFileDataStore.cs" />
+    <Compile Include="Model\Class\COFF\DelayImportDirectoryEntry.cs" />
+    <Compile Include="Model\Class\COFF\ImportDirectoryEntry.cs" />
+    <Compile Include="Model\Class\COFF\ImportDirectoryEntryList.cs" />
+    <Compile Include="Model\Class\COFF\OptionalHeaderDataDirImageOnlyLayoutModel.cs" />
     <Compile Include="Model\Class\FileDataStore.cs" />
     <Compile Include="Model\Class\COFF\COFFFileHeaderLayoutModel.cs" />
     <Compile Include="Model\Class\COFF\COFFSectionTableList.cs" />
@@ -106,11 +120,11 @@
     <Compile Include="Model\Stucture\COFF\COFFBaseRelocBlockHeader.cs" />
     <Compile Include="Model\Stucture\COFF\COFFBigObjHeader.cs" />
     <Compile Include="Model\Stucture\COFF\COFFFileHeader.cs" />
-    <Compile Include="Model\Stucture\COFF\COFFOptionalHeader.cs" />
     <Compile Include="Model\Stucture\COFF\COFFRelocationsObjectOnly.cs" />
     <Compile Include="Model\Stucture\COFF\COFFSectionTableLayout.cs" />
     <Compile Include="Model\Stucture\COFF\COFFSymbolTableBigObjLayout.cs" />
     <Compile Include="Model\Stucture\COFF\COFFSymbolTableLayout.cs" />
+    <Compile Include="Model\Class\COFF\DelayImportDirectoryEntryList.cs" />
     <Compile Include="Model\Stucture\COFF\DelayImportDirectoryTableEntry.cs" />
     <Compile Include="Model\Stucture\COFF\ExportDirectoryTableEntry.cs" />
     <Compile Include="Model\Stucture\COFF\ImportDirectoryTableEntry.cs" />
@@ -136,7 +150,9 @@
     <Compile Include="Process\MemorySequentialAccess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="WinSysInfo.MiniFileParser.Sign.pfx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

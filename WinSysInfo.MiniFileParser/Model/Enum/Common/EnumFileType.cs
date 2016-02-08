@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinSysInfo.MiniFileParser.Model
+﻿namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// Defines the different file types mostly by parsing the file extension

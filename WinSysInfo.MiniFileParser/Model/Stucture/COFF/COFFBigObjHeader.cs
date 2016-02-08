@@ -12,29 +12,29 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// Must be IMAGE_FILE_MACHINE_UNKNOWN (0)
         /// </summary>
-        public ushort Sig1 { get; set; }
+        public ushort Sig1;
 
         /// <summary>
         /// Must be 0xFFFF.
         /// </summary>
-        public ushort Sig2 { get; set; }
+        public ushort Sig2;
 
         /// <summary>
         /// Version
         /// </summary>
-        public ushort Version { get; set; }
-        public ushort Machine { get; set; }
-        public uint TimeDateStamp { get; set; }
+        public ushort Version;
+        public ushort Machine;
+        public uint TimeDateStamp;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] UUID;
 
-        public uint Unused1 { get; set; }
-        public uint Unused2 { get; set; }
-        public uint Unused3 { get; set; }
-        public uint Unused4 { get; set; }
-        public uint NumberOfSections { get; set; }
-        public uint PointerToSymbolTable { get; set; }
-        public uint NumberOfSymbols { get; set; }
+        public uint Unused1;
+        public uint Unused2;
+        public uint Unused3;
+        public uint Unused4;
+        public uint NumberOfSections;
+        public uint PointerToSymbolTable;
+        public uint NumberOfSymbols;
     }
 }

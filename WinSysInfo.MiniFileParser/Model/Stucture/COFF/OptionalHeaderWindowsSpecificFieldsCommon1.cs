@@ -13,7 +13,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// memory. It must be greater than or equal to FileAlignment. The 
         /// default is the page size for the architecture
         /// </summary>
-        public uint SectionAlignment { get; set; }
+        public uint SectionAlignment;
 
         /// <summary>
         /// The alignment factor (in bytes) that is used to align the raw data
@@ -22,54 +22,54 @@ namespace WinSysInfo.MiniFileParser.Model
         /// SectionAlignment is less than the architecture’s page size, then 
         /// FileAlignment must match SectionAlignment.
         /// </summary>
-        public uint FileAlignment { get; set; }
+        public uint FileAlignment;
 
         /// <summary>
         /// The major version number of the required operating system
         /// </summary>
-        public ushort MajorOperatingSystemVersion { get; set; }
+        public ushort MajorOperatingSystemVersion;
 
         /// <summary>
         /// The minor version number of the required operating system
         /// </summary>
-        public ushort MinorOperatingSystemVersion { get; set; }
+        public ushort MinorOperatingSystemVersion;
 
         /// <summary>
         /// The major version number of the image
         /// </summary>
-        public ushort MajorImageVersion { get; set; }
+        public ushort MajorImageVersion;
 
         /// <summary>
         /// The minor version number of the image
         /// </summary>
-        public ushort MinorImageVersion { get; set; }
+        public ushort MinorImageVersion;
 
         /// <summary>
         /// The major version number of the subsystem
         /// </summary>
-        public ushort MajorSubsystemVersion { get; set; }
+        public ushort MajorSubsystemVersion;
 
         /// <summary>
         /// The minor version number of the subsystem
         /// </summary>
-        public ushort MinorSubsystemVersion { get; set; }
+        public ushort MinorSubsystemVersion;
 
         /// <summary>
         /// Reserved, must be zero
         /// </summary>
-        public uint Win32VersionValue { get; set; }
+        public uint Win32VersionValue;
 
         /// <summary>
         /// The size (in bytes) of the image, including all headers, as the 
         /// image is loaded in memory. It must be a multiple of SectionAlignment
         /// </summary>
-        public uint SizeOfImage { get; set; }
+        public uint SizeOfImage;
 
         /// <summary>
         /// The combined size of an MSDOS stub, PE header, and section headers 
         /// rounded up to a multiple of FileAlignment
         /// </summary>
-        public uint SizeOfHeaders { get; set; }
+        public uint SizeOfHeaders;
 
         /// <summary>
         /// The image file checksum. The algorithm for computing the checksum is 
@@ -77,16 +77,16 @@ namespace WinSysInfo.MiniFileParser.Model
         /// at load time: all drivers, any DLL loaded at boot time, and any DLL
         /// that is loaded into a critical Windows process
         /// </summary>
-        public uint CheckSum { get; set; }
+        public uint CheckSum;
 
         /// <summary>
         /// The subsystem that is required to run this image
         /// </summary>
-        public ushort Subsystem { get; set; }
+        public ushort Subsystem;
 
         /// <summary>
         /// Dll characteristics
         /// </summary>
-        public EnumCOFFDllCharacteristics DllCharacteristics { get; set; }
+        public EnumCOFFDllCharacteristics DllCharacteristics;
     }
 }

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
@@ -105,7 +101,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public long FileOffset
         {
-            get { return (this.IoAccess != null) ? this.IoAccess.Position : -1; }
+            get { return (this.IoAccess != null) ? this.IoAccess.Position : 0; }
         }
 
         #endregion
@@ -546,7 +542,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Dispose wrapper. Actual dispose method.
         /// </summary>
         /// <param name="itIsSafeToAlsoFreeManagedObjects"></param>
-        protected void Dispose(Boolean itIsSafeToAlsoFreeManagedObjects)
+        protected virtual void Dispose(Boolean itIsSafeToAlsoFreeManagedObjects)
         {
             // Free unmanaged resources
 

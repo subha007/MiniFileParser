@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WinSysInfo.MiniFileParser.Helper;
-
-namespace WinSysInfo.MiniFileParser.Interface
+﻿namespace WinSysInfo.MiniFileParser.Interface
 {
     /// <summary>
     /// Common interface for all file browser classes

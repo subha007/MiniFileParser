@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WinSysInfo.MiniFileParser.Model
+﻿namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// The flags representing individual structures

@@ -2,7 +2,7 @@
 
 namespace WinSysInfo.MiniFileParser.Model
 {
-    public class SymbolTableBigObjList : List<LayoutModel<COFFSymbolTableBigObjLayout>>
+    public class ImportDirectoryEntryList : List<ImportDirectoryEntry>
     {
     }
 }

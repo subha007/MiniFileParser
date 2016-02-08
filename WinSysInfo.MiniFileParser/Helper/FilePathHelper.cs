@@ -75,7 +75,7 @@ namespace WinSysInfo.MiniFileParser.Helper
             get
             {
                 FileInfo fi = new FileInfo(this.ActualFile);
-                return fi.Extension.Remove(0);
+                return fi.Extension.TrimStart(new char[] { '.' });
             }
         }
 

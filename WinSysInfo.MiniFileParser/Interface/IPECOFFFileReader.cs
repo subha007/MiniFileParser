@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinSysInfo.MiniFileParser.Interface
+﻿namespace WinSysInfo.MiniFileParser.Interface
 {
-    internal interface IPECOFFFileReader : IBinaryFileReader
+    internal interface IPECOFFFileReader : IFileReader
     {
         #region Methods
 
@@ -14,7 +8,7 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// Check if the file has PE signature
         /// </summary>
         /// <returns></returns>
-        bool HasPEHeader();
+        void CheckPEHeader();
 
         /// <summary>
         /// Read MS DOS Header
@@ -50,7 +44,7 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// <summary>
         /// It might be a bigobj file, let's check.  Note that COFF bigobj and COFF
         /// </summary>
-        void CheckAndMaintainBigObjHeader();
+        void CheckBigObjHeader();
 
         /// <summary>
         /// Initialize optional header standard fields
@@ -84,6 +78,15 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// at run time. A data directory is an 8byte field.
         /// </summary>
         void ReadOptHeaderDataDirectoriesImageOnly();
+
+        void CalculateNumberOfSections();
+        void ReadSectionTable();
+        void CalculatePointerToSymbolTable();
+        void CalculateNumberOfSymbols();
+        void ReadSymbolTablePointer();
+
+        void InitDataDirTableEntryPointer();
+        uint GetSectionTableRvaPointer(uint Addr);
 
         #endregion Methods
     }

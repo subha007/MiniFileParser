@@ -1,4 +1,6 @@
-﻿namespace WinSysInfo.MiniFileParser.Model
+﻿using System.Runtime.InteropServices;
+
+namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// For each function definition in the symbol table, three items describe the beginning, 
@@ -9,39 +11,28 @@
     /// Total Size field in the function-definition symbol record. The .bf and .ef symbol records 
     /// (but not .lf records) are followed by an auxiliary record with the following format. </para>
     /// </summary>
-    public class AuxiliarybfAndefSymbolLayout
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct AuxiliarybfAndefSymbolLayout
     {
-        private byte[] unused1 = new byte[4];
-        public byte[] Unused1
-        {
-            get { return unused1; }
-            set { this.unused1 = value; }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        private byte[] unused1;
 
         /// <summary>
         /// The actual ordinal line number (1, 2, 3, and so on) within the source file, corresponding
         /// to the .bf or .ef record.
         /// </summary>
-        public ushort Linenumber { get; set; }
+        public ushort Linenumber;
 
-        private byte[] unused2 = new byte[6];
-        public byte[] Unused2
-        {
-            get { return unused2; }
-            set { this.unused2 = value; }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        private byte[] unused2;
 
         /// <summary>
         /// The symbol-table index of the next .bf symbol record. If the function is the last in the symbol 
         /// table, this field is set to zero. It is not used for .ef records.
         /// </summary>
-        public uint PointerToNextFunction { get; set; }
+        public uint PointerToNextFunction;
 
-        private byte[] unused3 = new byte[2];
-        public byte[] Unused3
-        {
-            get { return unused3; }
-            set { this.unused3 = value; }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        private byte[] unused3;
     }
 }

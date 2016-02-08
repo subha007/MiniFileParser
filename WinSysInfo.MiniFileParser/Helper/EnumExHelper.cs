@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinSysInfo.MiniFileParser.Helper
 {
@@ -48,7 +44,7 @@ namespace WinSysInfo.MiniFileParser.Helper
         /// <returns></returns>
         public static TEnum GetValueOf<TEnum>(string enumConst) where TEnum : struct
         {
-            return (TEnum) Enum.Parse(typeof(TEnum), enumConst);
+            return (TEnum) Enum.Parse(typeof(TEnum), enumConst.ToUpper());
         }
     }
 }

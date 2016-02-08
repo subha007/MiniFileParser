@@ -33,7 +33,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// the section is zero-padded. This field is valid only for executable images and should be set to zero 
         /// for object files.
         /// </summary>
-        public uint VirtualSize { get; set; }
+        public uint VirtualSize;
 
         /// <summary>
         /// For executable images, the address of the first byte of the section relative to the image base when 
@@ -41,7 +41,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// relocation is applied; for simplicity, compilers should set this to zero. Otherwise, it is an arbitrary
         /// value that is subtracted from offsets during relocation
         /// </summary>
-        public uint VirtualAddress { get; set; }
+        public uint VirtualAddress;
 
         /// <summary>
         /// The size of the section (for object files) or the size of the initialized data on disk (for image files).
@@ -50,7 +50,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// but the VirtualSize field is not, it is possible for SizeOfRawData to be greater than VirtualSize as well.
         /// When a section contains only uninitialized data, this field should be zero
         /// </summary>
-        public uint SizeOfRawData { get; set; }
+        public uint SizeOfRawData;
 
         /// <summary>
         /// The file pointer to the first page of the section within the COFF file. For executable images, this must 
@@ -58,34 +58,34 @@ namespace WinSysInfo.MiniFileParser.Model
         /// a 4 byte boundary for best performance. When a section contains only uninitialized data, this field should 
         /// be zero.
         /// </summary>
-        public uint PointerToRawData { get; set; }
+        public uint PointerToRawData;
 
         /// <summary>
         /// The file pointer to the beginning of relocation entries for the section. This is set to zero for executable
         /// images or if there are no relocations
         /// </summary>
-        public uint PointerToRelocations { get; set; }
+        public uint PointerToRelocations;
 
         /// <summary>
         /// The file pointer to the beginning of line-number entries for the section. This is set to zero if there are
         /// no COFF line numbers. This value should be zero for an image because COFF debugging information is deprecated.
         /// </summary>
-        public uint PointerToLineNumbers { get; set; }
+        public uint PointerToLineNumbers;
 
         /// <summary>
         /// The number of relocation entries for the section. This is set to zero for executable images.
         /// </summary>
-        public ushort NumberOfRelocations { get; set; }
+        public ushort NumberOfRelocations;
 
         /// <summary>
         /// The number of line-number entries for the section. This value should be zero for an image because COFF debugging
         /// information is deprecated
         /// </summary>
-        public ushort NumberOfLineNumbers { get; set; }
+        public ushort NumberOfLineNumbers;
 
         /// <summary>
         /// The flags that describe the characteristics of the section
         /// </summary>
-        public EnumCOFFSectionHeaderCharacteristics Characteristics { get; set; }
+        public EnumCOFFSectionHeaderCharacteristics Characteristics;
     }
 }

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
 
@@ -104,16 +100,15 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <returns>A byte array</returns>
         public byte[] PeekBytes(int count = 1, long position = 0)
         {
-            MemoryMappedViewStream tempPeek = this.MemoryFile.CreateViewStream(position, count, MemoryMappedFileAccess.Read);
-
-            if (tempPeek != null && count > 0)
+            using (MemoryMappedViewStream tempPeek =
+                this.MemoryFile.CreateViewStream(position, count, MemoryMappedFileAccess.Read))
             {
-                byte[] iodata = new byte[count];
-                tempPeek.Read(iodata, (int)0, count);
-                tempPeek.Close();
-                tempPeek.Dispose();
-                tempPeek = null;
-                return iodata;
+                if (tempPeek != null && count > 0)
+                {
+                    byte[] iodata = new byte[count];
+                    tempPeek.Read(iodata, (int)0, count);
+                    return iodata;
+                }
             }
 
             return null;
@@ -430,7 +425,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Dispose wrapper. Actual dispose method.
         /// </summary>
         /// <param name="itIsSafeToAlsoFreeManagedObjects"></param>
-        protected void Dispose(Boolean itIsSafeToAlsoFreeManagedObjects)
+        protected virtual void Dispose(Boolean itIsSafeToAlsoFreeManagedObjects)
         {
             // Free unmanaged resources
 

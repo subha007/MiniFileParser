@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Factory;
-using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
-using WinSysInfo.MiniFileParser.Model;
 
 namespace WinSysInfo.MiniFileParser.Process
 {

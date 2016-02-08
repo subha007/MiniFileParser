@@ -1,4 +1,6 @@
-﻿namespace WinSysInfo.MiniFileParser.Model
+﻿using System.Runtime.InteropServices;
+
+namespace WinSysInfo.MiniFileParser.Model
 {
     /// <summary>
     /// “Weak externals” are a mechanism for object files that allows flexibility at link time. 
@@ -12,12 +14,13 @@
     /// with EXTERNAL storage class, UNDEF section number, and a value of zero. The weak-external 
     /// symbol record is followed by an auxiliary record with the following format.
     /// </summary>
-    public class AuxiliaryWeakExternalLayout
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct AuxiliaryWeakExternalLayout
     {
         /// <summary>
         /// The symbol-table index of sym2, the symbol to be linked if sym1 is not found.
         /// </summary>
-        public uint TagIndex { get; set; }
+        public uint TagIndex;
 
         /// <summary>
         /// A value of IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY indicates that no library search for 
@@ -26,13 +29,9 @@
         /// should be performed. A value of IMAGE_WEAK_EXTERN_SEARCH_ALIAS indicates that sym1 
         /// is an alias for sym2.
         /// </summary>
-        public uint Characteristics { get; set; }
+        public uint Characteristics;
 
-        private byte[] unused = new byte[10];
-        public byte[] Unused
-        {
-            get { return unused; }
-            set { this.unused = value; }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        private byte[] unused;
     }
 }

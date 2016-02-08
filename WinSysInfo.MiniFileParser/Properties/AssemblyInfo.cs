@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WinSysInfo.MiniFileParser")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("FIle Parser for commonly known files")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard Company")]
-[assembly: AssemblyProduct("WinSysInfo.MiniFileParser")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2016")]
+[assembly: AssemblyCompany("Personal (Open Source)")]
+[assembly: AssemblyProduct("WinSysInfo")]
+[assembly: AssemblyCopyright("Copyright © PERSONAL 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

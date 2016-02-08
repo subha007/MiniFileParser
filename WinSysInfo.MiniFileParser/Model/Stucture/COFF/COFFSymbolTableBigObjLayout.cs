@@ -16,27 +16,27 @@ namespace WinSysInfo.MiniFileParser.Model
         /// The value that is associated with the symbol. The interpretation of this field depends on 
         /// SectionNumber and StorageClass. A typical meaning is the relocatable address.
         /// </summary>
-        public uint Value { get; set; }
+        public uint Value;
 
         /// <summary>
         /// The signed integer that identifies the section, using a one-based index into the section table.
         /// </summary>
-        public uint SectionNumber { get; set; }
+        public uint SectionNumber;
 
         /// <summary>
         /// A number that represents type. Microsoft tools set this field to 0x20 (function) or 0x0 
         /// (not a function). 
         /// </summary>
-        public ushort Type { get; set; }
+        public ushort Type;
 
         /// <summary>
         /// An enumerated value that represents storage class.
         /// </summary>
-        public EnumSymbolStorageClass StorageClass { get; set; }
+        public EnumSymbolStorageClass StorageClass;
 
         /// <summary>
         /// The number of auxiliary symbol table entries that follow this record.
         /// </summary>
-        public byte NumberOfAuxSymbols { get; set; }
+        public byte NumberOfAuxSymbols;
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinSysInfo.MiniFileParser.Helper;
 using WinSysInfo.MiniFileParser.Interface;
 using WinSysInfo.MiniFileParser.Model;
@@ -52,112 +49,122 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <returns></returns>
         public bool Read() 
         {
-            // Check if the header is truly PE Header
-            if (this.HasPEHeader() == false)
-                throw new FormatException("MZ header not present.");
-
-
-            // Read the MS DOS Header
-            ReadMSDOSHeader();
-
-            // Read the MS DOS Stub
-            ReadMSDOSStub();
-
-            // Check the PE magic bytes. ("PE\0\0")
-            if (ContainsPEMagicBytes() == false)
-                throw new NotImplementedException("This is not PE COFF file");
-
-            // Read NT header
-            ReadNTHeader();
-
-            // Check if this normal COFF file or big obj file
-            CheckAndMaintainBigObjHeader();
-
-            if (this.DataStore.IsCOFFFileHeader)
-                // Read COFF Header
-                ReadCOFFHeader();
-            else
-                // ReadcoffReaderHelper Big Obj COFF at the same position
-                ReadCOFFBigObjHeader();
-
-            // The prior checkSize call may have failed.  This isn't a hard error
-            // because we were just trying to sniff out bigobj.
-            if (this.DataStore.IsCOFFFileHeader && this.DataStore.CoffFileHeader.IsImportLibrary())
-                throw new Exception("Unknown file");
-
-            if (this.DataStore.HasPEHeader)
+            bool bSuccess = false;
+            try
             {
-                ReadOptHeaderStdFields();
+                // Open
+                this.ReaderStrategy.Open();
 
-                // Check PE32 or PE32+
-                if (this.DataStore.OptHStdFields.Data.Magic == EnumOptionalHeaderMagicNo.PE32)
-                {
-                    ReadOptHeaderStdFields32();
-                    ReadOptHeaderSpecificFields32();
-                }
-                else if (this.DataStore.OptHStdFields.Data.Magic == EnumOptionalHeaderMagicNo.PE32Plus)
-                {
-                    ReadOptHeaderSpecificFields32Plus();
-                }
+                // Check if the header is truly PE Header
+                this.CheckPEHeader();
+                if (this.DataStore.HasPEHeader == false)
+                    throw new FormatException("MZ header not present.");
+
+                // Read the MS DOS Header
+                ReadMSDOSHeader();
+
+                // Read the MS DOS Stub
+                ReadMSDOSStub();
+
+                // Check the PE magic bytes. ("PE\0\0")
+                if (ContainsPEMagicBytes() == false)
+                    throw new NotImplementedException("This is not PE COFF file");
+
+                // Read NT header
+                ReadNTHeader();
+
+                // Check if this normal COFF file or big obj file
+                CheckBigObjHeader();
+
+                if (this.DataStore.IsCOFFFileHeader)
+                    // Read COFF Header
+                    ReadCOFFHeader();
                 else
-                {
-                    // It's neither PE32 nor PE32+.
-                    throw new Exception("It's neither PE32 nor PE32+");
-                }
+                    // ReadcoffReaderHelper Big Obj COFF at the same position
+                    ReadCOFFBigObjHeader();
 
-                // Read the data directories
-                ReadOptHeaderDataDirectoriesImageOnly();
+                // The prior checkSize call may have failed.  This isn't a hard error
+                // because we were just trying to sniff out bigobj.
+                if (this.DataStore.IsCOFFFileHeader && this.DataStore.CoffFileHeader.IsImportLibrary())
+                    throw new Exception("Unknown file");
+
+                if (this.DataStore.HasPEHeader)
+                {
+                    ReadOptHeaderStdFields();
+
+                    // Check PE32 or PE32+
+                    if (this.DataStore.OptHStdFields.Data.Magic == EnumOptionalHeaderMagicNo.PE32)
+                    {
+                        ReadOptHeaderStdFields32();
+                        ReadOptHeaderSpecificFields32();
+                    }
+                    else if (this.DataStore.OptHStdFields.Data.Magic == EnumOptionalHeaderMagicNo.PE32Plus)
+                    {
+                        ReadOptHeaderSpecificFields32Plus();
+                    }
+                    else
+                    {
+                        // It's neither PE32 nor PE32+.
+                        throw new Exception("It's neither PE32 nor PE32+");
+                    }
+
+                    CalculateDataDirectoryCount();
+
+                    // Read the data directories
+                    ReadOptHeaderDataDirectoriesImageOnly();
+                }
 
                 // Read the Section Table (Section Header)
                 CalculateNumberOfSections();
                 ReadSectionTable();
-            }
 
-            // Initialize the pointer to the symbol table.
-            CalculateDataDirectoryCount();
-            if (this.DataStore.NumberOfDataDirImageOnly != 0)
+                // Initialize the pointer to the symbol table.
+                CalculatePointerToSymbolTable();
+                if (this.DataStore.PointerToSymbolTable != 0)
+                {
+                    ReadSymbolTablePointer();
+                }
+                else
+                {
+                    // We had better not have any symbols if we don't have a symbol table.
+                    CalculateNumberOfSymbols();
+                    if(this.DataStore.NumberOfSymbols != 0)
+                        throw new Exception("We had better not have any symbols if we don't have a symbol table");
+                }
+
+                // Initialize the pointer to the beginning of the Data Dir table.
+                InitImportDataDirPointer();
+                InitDelayImportDataDirPointer();
+                InitExportDataDirPointer();
+                InitBaseRelocDataDirPointer();
+
+                // Find string table. The first four byte of the string table contains the
+                // total size of the string table, including the size field itself. If the
+                // string table is empty, the value of the first four byte would be 4.
+
+                bSuccess = true;
+            }
+            finally
             {
-                ReadSymbolTablePointer();
-            }
-            else
-            {
-                // We had better not have any symbols if we don't have a symbol table.
-                //if (GetNumberOfSymbols() != 0)
-                    throw new Exception("We had better not have any symbols if we don't have a symbol table");
+                // Close
+                this.ReaderStrategy.Close();
             }
 
-            // Initialize the pointer to the beginning of the import table.
-            //if (InitImportTablePointer() == false)
-            //    throw new Exception();
-
-            //if (InitDelayImportTablePointer() == false)
-            //    throw new Exception();
-
-            //if (InitExportTablePointer() == false)
-            //    throw new Exception();
-
-            //if (InitBaseRelocPointer() == false)
-            //    throw new Exception();
-
-            // Find string table. The first four byte of the string table contains the
-            // total size of the string table, including the size field itself. If the
-            // string table is empty, the value of the first four byte would be 4.
-
-            return true;
+            return bSuccess;
         }
 
         /// <summary>
         /// Check if the file has PE signature
         /// </summary>
         /// <returns></returns>
-        public bool HasPEHeader()
+        public void CheckPEHeader()
         {
             // Check if this is a PE/COFF file.
             char[] sigchars = System.Text.Encoding.UTF8.GetString(
                                     ReaderStrategy.PeekBytes(2, -1))
                                     .ToCharArray();
 
-            return sigchars.SequenceEqual(ConstantWinCOFFImage.MSDOSMagic);
+            this.DataStore.HasPEHeader = sigchars.SequenceEqual(ConstantWinCOFFImage.MSDOSMagic);
         }
 
         /// <summary>
@@ -240,13 +247,13 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// It might be a bigobj file, let's check.  Note that COFF bigobj and COFF
         /// </summary>
-        public void CheckAndMaintainBigObjHeader()
+        public void CheckBigObjHeader()
         {
-            if ((!this.DataStore.HasPEHeader &&
+            this.DataStore.IsCOFFFileHeader = !(!this.DataStore.HasPEHeader &&
                 this.ReaderStrategy.PeekUShort(COFFFileHeaderLayoutModel.GetOffset("Machine")) == (ushort)0 &&
-                this.ReaderStrategy.PeekUShort(COFFFileHeaderLayoutModel.GetOffset("NumberOfSections")) == (ushort)0xFFFF)
-                == false)
-                return;
+                this.ReaderStrategy.PeekUShort(COFFFileHeaderLayoutModel.GetOffset("NumberOfSections")) == (ushort)0xFFFF);
+
+            if (this.DataStore.IsCOFFFileHeader == true) return;
 
             char[] sigchars = System.Text.Encoding.UTF8.GetString(
                 this.ReaderStrategy.ReadBytes(16, LayoutModel<COFFBigObjHeader>.GetOffset("UUID")))
@@ -255,9 +262,9 @@ namespace WinSysInfo.MiniFileParser.Process
             if (this.ReaderStrategy.PeekUShort(LayoutModel<COFFBigObjHeader>.GetOffset("Version"))
                 >= ConstantWinCOFFImage.MinBigObjectVersion &&
                     sigchars.SequenceEqual(ConstantWinCOFFImage.BigObjMagic) == true)
-                this.DataStore.Delete(EnumReaderLayoutType.COFF_FILE_HEADER);
+                this.DataStore.IsCOFFFileHeader = false;
             else
-                this.DataStore.Delete(EnumReaderLayoutType.COFF_BIGOBJ_FILE_HEADER);
+                this.DataStore.IsCOFFFileHeader = true;
         }
 
         /// <summary>
@@ -327,7 +334,8 @@ namespace WinSysInfo.MiniFileParser.Process
                 EnumReaderLayoutType enumVal = (EnumReaderLayoutType)
                     ((int)EnumReaderLayoutType.OPT_HEADER_DATADIR_EXPORT_TABLE + indx);
                 dirsImage.Add(enumVal,
-                                        this.ReaderStrategy.ReadLayout<OptionalHeaderDataDirImageOnly>());
+                             new OptionalHeaderDataDirImageOnlyLayoutModel(
+                                 this.ReaderStrategy.ReadLayout<OptionalHeaderDataDirImageOnly>()));
             }
 
             this.DataStore.OptHDataDirImages = dirsImage;
@@ -337,7 +345,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// Get the count of sections
         /// </summary>
         /// <returns></returns>
-        internal void CalculateNumberOfSections()
+        public void CalculateNumberOfSections()
         {
             if (this.DataStore.IsCOFFFileHeader)
                 this.DataStore.NumberOfSections =
@@ -350,7 +358,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Read the section tables list
         /// </summary>
-        internal void ReadSectionTable()
+        public void ReadSectionTable()
         {
             COFFSectionTableList listOfSectionTable = new COFFSectionTableList();
             for (int indx = 0; indx < this.DataStore.NumberOfSections; ++indx)
@@ -364,7 +372,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Calculate the position of the symbol table in the file
         /// </summary>
-        internal void CalculatePointerToSymbolTable()
+        public void CalculatePointerToSymbolTable()
         {
             if (this.DataStore.IsCOFFFileHeader)
                 this.DataStore.PointerToSymbolTable =
@@ -378,7 +386,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Calculate the number of symbols
         /// </summary>
-        internal void CalculateNumberOfSymbols()
+        public void CalculateNumberOfSymbols()
         {
             if (this.DataStore.IsCOFFFileHeader)
                 this.DataStore.NumberOfSymbols =
@@ -391,7 +399,7 @@ namespace WinSysInfo.MiniFileParser.Process
         /// <summary>
         /// Read the symbol table pointer
         /// </summary>
-        internal void ReadSymbolTablePointer()
+        public void ReadSymbolTablePointer()
         {
             if (this.DataStore.IsCOFFFileHeader)
             {
@@ -399,7 +407,7 @@ namespace WinSysInfo.MiniFileParser.Process
                 for (int indx = 0; indx < (int)this.DataStore.NumberOfSymbols; ++indx)
                     listOfSymbolTable.Add(new COFFSymbolTableLayoutModel(
                                 this.ReaderStrategy.ReadLayout<COFFSymbolTableLayout>()));
-                this.DataStore.SetData<EnumReaderLayoutType>(EnumReaderLayoutType.COFF_SYM_TABLE,
+                this.DataStore.SetData(EnumReaderLayoutType.COFF_SYM_TABLE,
                                         listOfSymbolTable);
             }
             else
@@ -411,6 +419,138 @@ namespace WinSysInfo.MiniFileParser.Process
                 this.DataStore.SetData(EnumReaderLayoutType.COFF_SYM_TABLE_BIGOBJ,
                                         listOfSymbolTable);
             }
+        }
+
+        public void InitDataDirTableEntryPointer<TDataDirStruct>(EnumReaderLayoutType dataDirType,
+            EnumReaderLayoutType dataTableType)
+            where TDataDirStruct : struct
+        {
+            // First, we get the RVA of the table. If the file lacks a pointer to
+            // the import table, do nothing.
+            if (this.DataStore.OptHDataDirImages.ContainsKey(dataDirType) == false) return;
+            OptionalHeaderDataDirImageOnlyLayoutModel dataDir = this.DataStore.OptHDataDirImages[dataDirType];
+
+            // Do nothing if the pointer to table is NULL.
+            if (dataDir.Data.RelativeVirtualAddress == 0) return;
+
+            // -1 because the last entry is the null entry.
+            dataDir.NumberOfDirectory = dataDir.Data.Size / 
+                                    LayoutModel<TDataDirStruct>.DataSize - 1;
+
+            // Find the section that contains the RVA. This is needed because the RVA is
+            // the import table's memory address which is different from its file offset.
+            uint intPtr = GetSectionTableRvaPointer(dataDir.Data.RelativeVirtualAddress);
+
+            // Move to pointer
+            this.ReaderStrategy.SeekOriginal(intPtr);
+
+            this.DataStore.SetData(dataTableType, this.ReaderStrategy.ReadLayout<TDataDirStruct>());
+        }
+
+        public uint GetSectionTableRvaPointer(uint Addr)
+        {
+            foreach (LayoutModel<COFFSectionTableLayout> sectionTable in this.DataStore.SectionTables)
+            {
+                if(sectionTable.Data.VirtualAddress <= Addr && 
+                   Addr < (sectionTable.Data.VirtualAddress + sectionTable.Data.VirtualSize))
+                {
+                    uint Offset = Addr - sectionTable.Data.VirtualAddress;
+                    return sectionTable.Data.PointerToRawData + Offset;
+                }
+            }
+
+            return 0;
+        }
+
+        internal void InitImportDataDirPointer()
+        {
+            // First, we get the RVA of the table. If the file lacks a pointer to
+            // the import table, do nothing.
+            if (this.DataStore.OptHDataDirImages.ContainsKey(EnumReaderLayoutType.OPT_HEADER_DATADIR_IMPORT_TABLE) == false) return;
+            OptionalHeaderDataDirImageOnlyLayoutModel dataDir = 
+                this.DataStore.OptHDataDirImages[EnumReaderLayoutType.OPT_HEADER_DATADIR_IMPORT_TABLE];
+
+            // Do nothing if the pointer to table is NULL.
+            if (dataDir.Data.RelativeVirtualAddress == 0) return;
+
+            // -1 because the last entry is the null entry.
+            dataDir.NumberOfDirectory = dataDir.Data.Size /
+                                    LayoutModel<ImportDirectoryTableEntry>.DataSize - 1;
+
+            // Find the section that contains the RVA. This is needed because the RVA is
+            // the import table's memory address which is different from its file offset.
+            uint intPtr = GetSectionTableRvaPointer(dataDir.Data.RelativeVirtualAddress);
+
+            // Move to pointer
+            this.ReaderStrategy.SeekOriginal(intPtr);
+
+            ImportDirectoryEntryList importDirList = new ImportDirectoryEntryList();
+            for (int indx = 0; indx < (int)dataDir.NumberOfDirectory; ++indx)
+                importDirList.Add(new ImportDirectoryEntry(
+                            this.ReaderStrategy.ReadLayout<ImportDirectoryTableEntry>()));
+
+            this.DataStore.SetData(EnumReaderLayoutType.IMPORT_DIR_TABLE_ENTRY, importDirList);
+        }
+
+        internal void InitDelayImportDataDirPointer()
+        {
+            // First, we get the RVA of the table. If the file lacks a pointer to
+            // the import table, do nothing.
+            if (this.DataStore.OptHDataDirImages.ContainsKey(EnumReaderLayoutType.OPT_HEADER_DATADIR_DELAY_IMPORT_DESCRIPTOR) == false) return;
+            OptionalHeaderDataDirImageOnlyLayoutModel dataDir =
+                this.DataStore.OptHDataDirImages[EnumReaderLayoutType.OPT_HEADER_DATADIR_DELAY_IMPORT_DESCRIPTOR];
+
+            // Do nothing if the pointer to table is NULL.
+            if (dataDir.Data.RelativeVirtualAddress == 0) return;
+
+            // -1 because the last entry is the null entry.
+            dataDir.NumberOfDirectory = dataDir.Data.Size /
+                                    LayoutModel<ImportDirectoryTableEntry>.DataSize - 1;
+
+            // Find the section that contains the RVA. This is needed because the RVA is
+            // the import table's memory address which is different from its file offset.
+            uint intPtr = GetSectionTableRvaPointer(dataDir.Data.RelativeVirtualAddress);
+
+            // Move to pointer
+            this.ReaderStrategy.SeekOriginal(intPtr);
+
+            DelayImportDirectoryEntryList delayimportDirList = new DelayImportDirectoryEntryList();
+            for (int indx = 0; indx < (int)dataDir.NumberOfDirectory; ++indx)
+                delayimportDirList.Add(new DelayImportDirectoryEntry(
+                            this.ReaderStrategy.ReadLayout<DelayImportDirectoryTableEntry>()));
+
+            this.DataStore.SetData(EnumReaderLayoutType.DELAY_IMPORT_DIR_TABLE_ENTRY, delayimportDirList);
+        }
+
+        internal void InitExportDataDirPointer()
+        {
+            InitDataDirTableEntryPointer<ImportDirectoryTableEntry>(EnumReaderLayoutType.OPT_HEADER_DATADIR_EXPORT_TABLE,
+                EnumReaderLayoutType.EXPORT_DIR_TABLE_ENTRY);
+        }
+
+        internal void InitBaseRelocDataDirPointer()
+        {
+            // First, we get the RVA of the table. If the file lacks a pointer to
+            // the import table, do nothing.
+            if (this.DataStore.OptHDataDirImages.ContainsKey(EnumReaderLayoutType.OPT_HEADER_DATADIR_BASE_RELOCATION_TABLE) == false) return;
+            OptionalHeaderDataDirImageOnlyLayoutModel dataDir = 
+                this.DataStore.OptHDataDirImages[EnumReaderLayoutType.OPT_HEADER_DATADIR_BASE_RELOCATION_TABLE];
+
+            // Do nothing if the pointer to table is NULL.
+            if (dataDir.Data.RelativeVirtualAddress == 0) return;
+
+            // Find the section that contains the RVA. This is needed because the RVA is
+            // the import table's memory address which is different from its file offset.
+            uint intPtr = GetSectionTableRvaPointer(dataDir.Data.RelativeVirtualAddress);
+
+            // Move to pointer
+            this.ReaderStrategy.SeekOriginal(intPtr);
+
+            this.DataStore.SetData(EnumReaderLayoutType.BASE_RELOC_HEADER, 
+                this.ReaderStrategy.ReadLayout<COFFBaseRelocBlockHeader>());
+            this.ReaderStrategy.SeekOriginal(intPtr + dataDir.Data.Size);
+            this.DataStore.SetData(EnumReaderLayoutType.BASE_RELOC_END,
+                this.ReaderStrategy.ReadLayout<COFFBaseRelocBlockHeader>());
         }
 
         internal OptHeaderDataDirectoriesImageOnly GetDataDirectory(EnumReaderLayoutType dataDirType)
@@ -425,25 +565,6 @@ namespace WinSysInfo.MiniFileParser.Process
         internal COFFSectionTableList GetSections()
         {
             return this.DataStore.SectionTables;
-        }
-
-        internal long GetRVAPosition(uint dataRelVirtualAddress)
-        {
-            List<LayoutModel<COFFSectionTableLayout>> listSections = GetSections();
-
-            foreach (LayoutModel<COFFSectionTableLayout> section in listSections)
-            {
-                uint sectionEnd = section.Data.VirtualAddress + section.Data.VirtualSize;
-                if (section.Data.VirtualAddress <= dataRelVirtualAddress &&
-                    dataRelVirtualAddress < sectionEnd)
-                {
-                    uint offset = dataRelVirtualAddress - section.Data.VirtualAddress;
-                    uint position = section.Data.PointerToRawData + offset;
-                    return position;
-                }
-            }
-
-            return -1;
         }
 
         #endregion Methods
