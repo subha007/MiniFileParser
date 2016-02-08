@@ -26,6 +26,11 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         protected IFileBrowser Browser { get; set; }
 
+        public IFileDataStore DataStore
+        {
+            get { return this.Browser.Store; }
+        }
+
         #endregion Properties
 
         #region Constructors
