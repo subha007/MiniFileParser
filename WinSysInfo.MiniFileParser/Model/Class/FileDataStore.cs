@@ -24,6 +24,12 @@ namespace WinSysInfo.MiniFileParser.Model
         protected List<T1StructId> layoutOrder { get; set; }
         public IList LayoutOrder { get; set; }
 
+        /// <summary>
+        /// Store the parent child relationship
+        /// </summary>
+        protected Dictionary<T1StructId, StateNode<T1StructId>> parentChild;
+        public IDictionary ParentChild { get; set; }
+
         #endregion Properties
 
         #region Constructors
@@ -35,6 +41,7 @@ namespace WinSysInfo.MiniFileParser.Model
         {
             this.FileData = new Dictionary<T1StructId, object>();
             this.LayoutOrder = new List<T1StructId>();
+            this.ParentChild = new Dictionary<T1StructId, StateNode<T1StructId>>();
         }
 
         #endregion Constructors
@@ -47,31 +54,29 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <typeparam name="object"></typeparam>
         /// <param name="enumVal"></param>
         /// <returns></returns>
-        public object GetData<TStructId>(TStructId enumVal)
+        public LayoutModel<TStruct> GetData<TStructId, TStruct>(TStructId enumVal)
             where TStructId : struct
+            where TStruct : struct
         {
-            object model = null;
+            LayoutModel<TStruct> model = null;
             if (this.FileData.Contains(enumVal) == true)
-                model = this.FileData[enumVal];
+                model = this.FileData[enumVal] as LayoutModel<TStruct>;
 
             return model;
         }
 
         /// <summary>
-        /// Get the data
+        /// Get the list data
         /// </summary>
         /// <typeparam name="object"></typeparam>
         /// <param name="index"></param>
         /// <returns></returns>
-        public object GetData(int index)
+        public List<LayoutModel<TStruct>> GetListData<TStructId, TStruct>(TStructId enumVal)
+            where TStruct : struct
         {
-            if (!(index >= 0 && index < this.FileData.Count)) return null;
-
-            T1StructId enumVal = (T1StructId)this.LayoutOrder[index];
-
-            object model = null;
+            List<LayoutModel<TStruct>> model = null;
             if (this.FileData.Contains(enumVal) == true)
-                model = this.FileData[enumVal];
+                model = this.FileData[enumVal] as List<LayoutModel<TStruct>>;
 
             return model;
         }
@@ -79,24 +84,87 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <summary>
         /// Set the data list
         /// </summary>
-        /// <typeparam name="object"></typeparam>
+        /// <typeparam name="modelobj"></typeparam>
         /// <param name="enumVal"></param>
         /// <returns></returns>
-        public void SetData<TStructId>(TStructId enumVal, object modelList,
-            int position = -1)
+        public void SetData<TStructId, TStruct>(TStructId enumVal, LayoutModel<TStruct> modelobj,
+            TStructId? enumParent = null, int position = -1)
             where TStructId : struct
+            where TStruct : struct
         {
             if (this.FileData.Contains(enumVal) == true)
-                this.FileData[enumVal] = modelList;
+                this.FileData[enumVal] = modelobj;
             else
-                this.FileData.Add(enumVal, modelList);
+                this.FileData.Add(enumVal, modelobj);
 
-            int fIndex = this.LayoutOrder.IndexOf(enumVal);
-            if (fIndex == position) return;
-            if (fIndex >= 0)
-                this.LayoutOrder.Insert(position, enumVal);
+            if (position >= 0)
+            {
+                int fIndex = this.LayoutOrder.IndexOf(enumVal);
+                if (fIndex == position)
+                {
+                    if (fIndex >= 0)
+                        this.LayoutOrder.Insert(position, enumVal);
+                    else
+                        this.LayoutOrder.Add(enumVal);
+                }
+            }
+
+            if (enumParent != null && enumParent.HasValue == true)
+            {
+                SetRelation(enumVal, enumParent.Value);
+            }
+        }
+
+        /// <summary>
+        /// Set the data list
+        /// </summary>
+        /// <typeparam name="modelobj"></typeparam>
+        /// <param name="enumVal"></param>
+        /// <returns></returns>
+        public void SetListData<TStructId, TStruct>(TStructId enumVal, List<LayoutModel<TStruct>> modelobjList,
+            TStructId? enumParent = null, int position = -1)
+            where TStructId : struct
+            where TStruct : struct
+        {
+            if (this.FileData.Contains(enumVal) == true)
+                this.FileData[enumVal] = modelobjList;
             else
-                this.LayoutOrder.Add(enumVal);
+                this.FileData.Add(enumVal, modelobjList);
+
+            if (position >= 0)
+            {
+                int fIndex = this.LayoutOrder.IndexOf(enumVal);
+                if (fIndex == position)
+                {
+                    if (fIndex >= 0)
+                        this.LayoutOrder.Insert(position, enumVal);
+                    else
+                        this.LayoutOrder.Add(enumVal);
+                }
+            }
+
+            if (enumParent != null && enumParent.HasValue == true)
+            {
+                SetRelation(enumVal, enumParent.Value);
+            }
+        }
+
+        /// <summary>
+        /// Set the relationship of parent child
+        /// </summary>
+        /// <param name="enumId"></param>
+        /// <param name="enumParent"></param>
+        public void SetRelation<TStructId>(TStructId enumId, TStructId enumParent)
+        {
+            if (this.ParentChild.Contains(enumParent) == false)
+            {
+                StateNode<TStructId> nodeParent = new StateNode<TStructId>();
+                nodeParent.Id = enumParent;
+                this.ParentChild.Add(enumParent, nodeParent);
+            }
+
+            if (((StateNode<TStructId>)this.ParentChild[enumParent]).Children.Contains(enumId) == false)
+                ((StateNode<TStructId>)this.ParentChild[enumParent]).Children.Add(enumId);
         }
 
         /// <summary>

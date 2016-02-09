@@ -6,7 +6,7 @@ namespace WinSysInfo.MiniFileParser.Model
 {
     [Serializable]
     public class OptHeaderDataDirectoriesImageOnly : 
-                Dictionary<EnumReaderLayoutType, OptionalHeaderDataDirImageOnlyLayoutModel>
+                Dictionary<EnumPEStructureId, OptionalHeaderDataDirImageOnlyLayoutModel>
     {
         #region Constructors
 

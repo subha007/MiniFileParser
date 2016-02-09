@@ -197,28 +197,12 @@ namespace WinSysInfo.MiniFileParser.Process
         public LayoutModel<TLayoutType> ReadLayout<TLayoutType>(long position = 0)
             where TLayoutType : struct
         {
-            LayoutModel<TLayoutType> model = new LayoutModel<TLayoutType>();
-            this.ReadLayout<TLayoutType>(model, position);
+            TLayoutType fileData;
+            this.Accessor.Read<TLayoutType>(position, out fileData);
+
+            LayoutModel<TLayoutType> model = new LayoutModel<TLayoutType>(fileData);
 
             return model;
-        }
-
-        /// <summary>
-        /// Read a layout model
-        /// </summary>
-        /// <typeparam name="T">The Layout Model value Type</typeparam>
-        /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
-        /// <param name="model">The structure to contain the read data</param>
-        public void ReadLayout<TLayoutType>(LayoutModel<TLayoutType> model, long position)
-            where TLayoutType : struct
-        {
-            if (this.Accessor != null)
-            {
-                TLayoutType fileData;
-                this.Accessor.Read<TLayoutType>(position, out fileData);
-                model.SetData(fileData);
-            }
         }
 
         /// <summary>

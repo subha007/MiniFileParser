@@ -9,16 +9,40 @@ namespace WinSysInfo.MiniFileParser.Model
     /// <typeparam name="TLayoutType"></typeparam>
     public class LayoutModel<TLayoutType> where TLayoutType : struct
     {
+        #region Properties
+
         /// <summary>
         /// Get or set the layout type
         /// </summary>
         public EnumPEStructureId LayoutType { get; set; }
 
         /// <summary>
+        /// Get or set the start position in the File (relative to file)
+        /// </summary>
+        public ulong StartPositionInFile { get; set; }
+
+        /// <summary>
+        /// Get or set the end position in the File (relative to file)
+        /// </summary>
+        public ulong EndPositionInFile { get; set; }
+
+        /// <summary>
         /// Get or set the main data object
         /// </summary>
-        protected TLayoutType actualData;
-        public TLayoutType Data { get { return actualData; } }
+        protected TLayoutType? actualData;
+        public TLayoutType Data 
+        {
+            get 
+            {
+                if (actualData.HasValue == false)
+                    throw new ArgumentNullException();
+                return actualData.Value;
+            } 
+        }
+
+        #endregion Properties
+
+        #region Constructor
 
         public LayoutModel() { }
 
@@ -31,6 +55,19 @@ namespace WinSysInfo.MiniFileParser.Model
             this.LayoutType = obj.LayoutType;
             this.actualData = obj.Data;
         }
+
+        /// <summary>
+        /// Shallow copy
+        /// </summary>
+        /// <param name="obj"></param>
+        public LayoutModel(TLayoutType obj)
+        {
+            this.actualData = obj;
+        }
+
+        #endregion Constructor
+
+        #region Methods
 
         /// <summary>
         /// Set the data
@@ -73,5 +110,7 @@ namespace WinSysInfo.MiniFileParser.Model
                 return (uint)Marshal.SizeOf(typeof(TLayoutType));
             }
         }
+
+        #endregion Methods
     }
 }

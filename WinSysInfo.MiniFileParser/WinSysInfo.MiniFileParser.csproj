@@ -75,6 +75,7 @@
     <Compile Include="Model\Class\COFF\OptHeaderDataDirectoriesImageOnly.cs" />
     <Compile Include="Model\Class\COFF\SymbolTableBigObjList.cs" />
     <Compile Include="Model\Class\COFF\SymbolTableList.cs" />
+    <Compile Include="Model\Class\ParentChildRelation.cs" />
     <Compile Include="Model\Enum\Common\EnumReaderBufferType.cs" />
     <Compile Include="Model\Enum\Common\EnumReaderType.cs" />
     <Compile Include="Model\Enum\Common\EnumFileType.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Model\Enum\COFF\EnumOptionalHeaderMagicNo.cs" />
     <Compile Include="Model\Enum\COFF\EnumPEStructureId.cs" />
     <Compile Include="Model\Enum\COFF\EnumPEType.cs" />
-    <Compile Include="Model\Enum\COFF\EnumReaderLayoutType.cs" />
     <Compile Include="Model\Enum\COFF\EnumRelocationTypeAMD64.cs" />
     <Compile Include="Model\Enum\COFF\EnumRelocationTypeI386.cs" />
     <Compile Include="Model\Enum\COFF\EnumRelocationTypesARM.cs" />
@@ -143,8 +143,8 @@
     <Compile Include="Process\FileLoader.cs" />
     <Compile Include="Factory\FileTypeFactory.cs" />
     <Compile Include="Process\FileReaderProperty.cs" />
-    <Compile Include="Process\MemoryRandomAccess.cs" />
-    <Compile Include="Process\MemorySequentialAccess.cs" />
+    <Compile Include="Process\Reader\MemoryRandomAccess.cs" />
+    <Compile Include="Process\Reader\MemorySequentialAccess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

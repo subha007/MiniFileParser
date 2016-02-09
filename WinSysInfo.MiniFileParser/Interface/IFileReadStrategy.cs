@@ -97,16 +97,6 @@ namespace WinSysInfo.MiniFileParser.Interface
             where TLayoutType : struct;
 
         /// <summary>
-        /// Read a layout model
-        /// </summary>
-        /// <typeparam name="T">The Layout Model value Type</typeparam>
-        /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
-        /// <param name="model">The structure to contain the read data</param>
-        void ReadLayout<TLayoutType>(LayoutModel<TLayoutType> model, long position = 0)
-            where TLayoutType : struct;
-
-        /// <summary>
         /// Read bytes
         /// </summary>
         /// <param name="position">The position in the file at which to begin reading

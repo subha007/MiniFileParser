@@ -143,7 +143,8 @@ namespace WinSysInfo.MiniFileParser.Process
             using (MemoryMappedViewStream tempPeek = this.MemoryFile.CreateViewStream(position,
                 count, MemoryMappedFileAccess.Read))
             {
-                MemorySequentialAccess.ReadLayoutHelper(tempPeek, model, position);
+                //MemorySequentialAccess.ReadLayoutHelper(tempPeek, model, position);
+                // TODO
             }
 
             return model;
@@ -210,40 +211,17 @@ namespace WinSysInfo.MiniFileParser.Process
             where TLayoutType : struct
         {
             LayoutModel<TLayoutType> model = new LayoutModel<TLayoutType>();
-            this.ReadLayout<TLayoutType>(model, position);
+
+            // Seek Position from current
+            this.IoAccess.Seek(position, System.IO.SeekOrigin.Current);
+
+            byte[] bytes = ReadBytes(this.IoAccess, (int)LayoutModel<TLayoutType>.DataSize, position);
+
+            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            model.SetData((TLayoutType)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TLayoutType)));
+            handle.Free();
 
             return model;
-        }
-
-        /// <summary>
-        /// Read a layout model
-        /// </summary>
-        /// <typeparam name="TLayoutType">The Layout Model value Type</typeparam>
-        /// <param name="position">The position in the file at which to begin reading
-        /// relative to the current position in the file. Default is 0</param>
-        /// <param name="model">The structure to contain the read data</param>
-        public void ReadLayout<TLayoutType>(LayoutModel<TLayoutType> model, long position = 0)
-            where TLayoutType : struct
-        {
-            MemorySequentialAccess.ReadLayoutHelper(this.IoAccess, model, position);
-        }
-
-        private static void ReadLayoutHelper<TLayoutType>(MemoryMappedViewStream viewStream
-            , LayoutModel<TLayoutType> model
-            , long position = 0)
-            where TLayoutType : struct
-        {
-            if (viewStream != null)
-            {
-                // Seek Position from current
-                viewStream.Seek(position, System.IO.SeekOrigin.Current);
-
-                byte[] bytes = ReadBytes(viewStream, (int)LayoutModel<TLayoutType>.DataSize, position);
-
-                GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-                model.SetData(Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TLayoutType)));
-                handle.Free();
-            }
         }
 
         /// <summary>
