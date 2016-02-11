@@ -211,7 +211,7 @@ namespace WinSysInfo.MiniFileParser.Process
             // PE/COFF, seek through MS-DOS compatibility stub and 4-byte
             // PE signature to find 'normal' COFF header.
             this.DataStore.CoffFileHeader =
-                                new COFFFileHeaderLayoutModel(this.ReaderStrategy.ReadLayout<COFFFileHeader>());
+                                this.ReaderStrategy.ReadLayout<COFFFileHeader>();
         }
 
         /// <summary>
@@ -231,8 +231,8 @@ namespace WinSysInfo.MiniFileParser.Process
         public void CheckBigObjHeader()
         {
             this.DataStore.IsCOFFFileHeader = !(!this.DataStore.HasPEHeader &&
-                this.ReaderStrategy.PeekUShort(COFFFileHeaderLayoutModel.GetOffset("Machine")) == (ushort)0 &&
-                this.ReaderStrategy.PeekUShort(COFFFileHeaderLayoutModel.GetOffset("NumberOfSections")) == (ushort)0xFFFF);
+                this.ReaderStrategy.PeekUShort(LayoutModel<COFFFileHeader>.GetOffset("Machine")) == (ushort)0 &&
+                this.ReaderStrategy.PeekUShort(LayoutModel<COFFFileHeader>.GetOffset("NumberOfSections")) == (ushort)0xFFFF);
 
             if (this.DataStore.IsCOFFFileHeader == true) return;
 
@@ -308,7 +308,8 @@ namespace WinSysInfo.MiniFileParser.Process
         public void ReadOptHeaderDataDirectoriesImageOnly()
         {
             // Read the data directories
-            OptHeaderDataDirectoriesImageOnly dirsImage = new OptHeaderDataDirectoriesImageOnly();
+            Dictionary<EnumPEStructureId, LayoutModel<OptionalHeaderDataDirImageOnly>> dirsImage =
+                        new Dictionary<EnumPEStructureId, LayoutModel<OptionalHeaderDataDirImageOnly>>();
 
             for (int indx = 0; indx < this.DataStore.NumberOfDataDirImageOnly; ++indx)
             {
@@ -338,11 +339,10 @@ namespace WinSysInfo.MiniFileParser.Process
         /// </summary>
         public void ReadSectionTable()
         {
-            COFFSectionTableList listOfSectionTable = new COFFSectionTableList();
+            List<LayoutModel<COFFSectionTableLayout>> listOfSectionTable = new List<LayoutModel<COFFSectionTableLayout>>();
             for (int indx = 0; indx < this.DataStore.NumberOfSections; ++indx)
             {
-                listOfSectionTable.Add(
-                    this.ReaderStrategy.ReadLayout<COFFSectionTableLayout>());
+                listOfSectionTable.Add(this.ReaderStrategy.ReadLayout<COFFSectionTableLayout>());
             }
             this.DataStore.SectionTables = listOfSectionTable;
         }
@@ -383,16 +383,14 @@ namespace WinSysInfo.MiniFileParser.Process
             {
                 List<LayoutModel<COFFSymbolTableLayout>> listOfSymbolTable = new List<LayoutModel<COFFSymbolTableLayout>>();
                 for (int indx = 0; indx < (int)this.DataStore.NumberOfSymbols; ++indx)
-                    listOfSymbolTable.Add(new COFFSymbolTableLayoutModel(
-                                this.ReaderStrategy.ReadLayout<COFFSymbolTableLayout>()));
+                    listOfSymbolTable.Add(this.ReaderStrategy.ReadLayout<COFFSymbolTableLayout>());
                 this.DataStore.SymbolTables = listOfSymbolTable;
             }
             else
             {
                 List<LayoutModel<COFFSymbolTableBigObjLayout>> listOfSymbolTable = new List<LayoutModel<COFFSymbolTableBigObjLayout>>();
                 for (int indx = 0; indx < (int)this.DataStore.NumberOfSymbols; ++indx)
-                    listOfSymbolTable.Add(
-                                this.ReaderStrategy.ReadLayout<COFFSymbolTableBigObjLayout>());
+                    listOfSymbolTable.Add(this.ReaderStrategy.ReadLayout<COFFSymbolTableBigObjLayout>());
                 this.DataStore.SymbolTablesBigObj = listOfSymbolTable;
             }
         }

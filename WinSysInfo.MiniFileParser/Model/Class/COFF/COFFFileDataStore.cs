@@ -9,21 +9,12 @@ namespace WinSysInfo.MiniFileParser.Model
     /// </summary>
     public class COFFFileDataStore : FileDataStore<EnumPEStructureId>
     {
-        #region Constructors
-
-        public COFFFileDataStore()
-        {
-            this.SetRelation(EnumPEStructureId.OPTIONAL_HEADER_FIELDS, EnumPEStructureId.OS_HEADER);
-        }
-
-        #endregion Constructors
-
         #region Methods
 
         /// <summary>
         /// Get the list of data
         /// </summary>
-        /// <typeparam name="object"></typeparam>
+        /// <typeparam name="TStruct"></typeparam>
         /// <param name="enumVal"></param>
         /// <returns></returns>
         public List<LayoutModel<TStruct>> GetListData<TStruct>(EnumPEStructureId enumVal)
@@ -54,7 +45,7 @@ namespace WinSysInfo.MiniFileParser.Model
             EnumPEStructureId? enumParent = null, int position = -1)
             where TStruct : struct
         {
-            base.SetData<EnumPEStructureId, TStruct>(enumVal, modelobj, enumParent, position);
+            base.SetData<EnumPEStructureId, TStruct>(enumVal, modelobj, position);
         }
 
         #endregion Methods
@@ -75,7 +66,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.MSDOS_HEADER, value, EnumPEStructureId.OS_HEADER);
+                this.SetData(EnumPEStructureId.MSDOS_HEADER, value);
             }
         }
 
@@ -127,7 +118,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.NT_HEADER, value, EnumPEStructureId.OS_HEADER);
+                this.SetData(EnumPEStructureId.NT_HEADER, value);
             }
         }
 
@@ -144,7 +135,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.COFF_FILE_HEADER, value, EnumPEStructureId.OS_HEADER);
+                this.SetData(EnumPEStructureId.COFF_FILE_HEADER, value);
             }
         }
 
@@ -159,7 +150,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.COFF_BIGOBJ_FILE_HEADER, value, EnumPEStructureId.OS_HEADER);
+                this.SetData(EnumPEStructureId.COFF_BIGOBJ_FILE_HEADER, value);
             }
         }
 
@@ -169,7 +160,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <returns></returns>
         public bool IsImportLibrary()
         {
-            return this.CoffFileBigHeader.Data.NumberOfSections == 0XFFFF;
+            return this.CoffFileHeader.Data.NumberOfSections == 0XFFFF;
         }
 
         /// <summary>
@@ -183,7 +174,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS, value, EnumPEStructureId.OPTIONAL_HEADER_FIELDS);
+                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS, value);
             }
         }
 
@@ -198,7 +189,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS32, value, EnumPEStructureId.OPTIONAL_HEADER_FIELDS);
+                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS32, value);
             }
         }
 
@@ -213,7 +204,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS32, value, EnumPEStructureId.OPTIONAL_HEADER_FIELDS);
+                this.SetData(EnumPEStructureId.OPT_HEADER_STD_FIELDS32, value);
             }
         }
 
@@ -228,7 +219,7 @@ namespace WinSysInfo.MiniFileParser.Model
             }
             set
             {
-                this.SetData(EnumPEStructureId.OPT_HEADER_SPEC_FLD32PLUS, value, EnumPEStructureId.OPTIONAL_HEADER_FIELDS);
+                this.SetData(EnumPEStructureId.OPT_HEADER_SPEC_FLD32PLUS, value);
             }
         }
 
@@ -239,7 +230,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// </summary>
         internal void SetOptHDataDirImages(EnumPEStructureId structId, LayoutModel<OptionalHeaderDataDirImageOnly> value)
         {
-            this.SetData(structId, value, EnumPEStructureId.OPT_HEADER_DATADIR_IMAGE_ONLY);
+            this.SetData(structId, value);
         }
 
         /// <summary>
@@ -300,7 +291,7 @@ namespace WinSysInfo.MiniFileParser.Model
         internal void SetDirTableEntry<TDataDirStruct>(EnumPEStructureId dataDirEnum, List<LayoutModel<TDataDirStruct>> listDataDir)
             where TDataDirStruct : struct
         {
-            this.SetListData(dataDirEnum, listDataDir, EnumPEStructureId.DATA_DIR_TABLE_ENTRY);
+            this.SetListData(dataDirEnum, listDataDir);
         }
 
         #endregion Properties

@@ -34,8 +34,6 @@ namespace WinSysInfo.MiniFileParser.Model
         {
             get 
             {
-                if (actualData.HasValue == false)
-                    throw new ArgumentNullException();
                 return actualData.Value;
             } 
         }

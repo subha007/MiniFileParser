@@ -18,11 +18,6 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// </summary>
         IList LayoutOrder { get; set; }
 
-        /// <summary>
-        /// Store the parent child relationship
-        /// </summary>
-        IDictionary ParentChild { get; set; }
-
         #endregion Properties
 
         #region Methods
@@ -55,7 +50,7 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// <param name="position"></param>
         /// <returns></returns>
         void SetData<TStructId, TStruct>(TStructId enumVal, LayoutModel<TStruct> modelobj,
-            TStructId? enumParent = null, int position = -1)
+            int position = -1)
             where TStructId : struct
             where TStruct : struct;
 
@@ -69,7 +64,7 @@ namespace WinSysInfo.MiniFileParser.Interface
         /// <param name="enumParent"></param>
         /// <param name="position"></param>
         void SetListData<TStructId, TStruct>(TStructId enumVal, List<LayoutModel<TStruct>> modelobjList,
-            TStructId? enumParent = null, int position = -1)
+            int position = -1)
             where TStructId : struct
             where TStruct : struct;
 

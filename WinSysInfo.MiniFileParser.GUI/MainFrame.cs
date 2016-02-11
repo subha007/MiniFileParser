@@ -39,49 +39,14 @@ namespace WinSysInfo.MiniFileParser.GUI
         {
             treeViewFile.Nodes.Clear();
 
-            foreach (KeyValuePair<EnumPEStructureId, object> kv in 
+            foreach (KeyValuePair<EnumPEStructureId, object> kv in
                 (Dictionary<EnumPEStructureId, object>)loader.DataStore.FileData)
             {
                 TreeNode parent = new TreeNode(kv.Key.ToString());
-                parent.Tag = kv.Value;
-                AddChildren(kv.Value, parent);
                 treeViewFile.Nodes.Add(parent);
             }
-
+            
             treeViewFile.SelectedNode = treeViewFile.Nodes[0];
-        }
-
-        private void AddChildren(object valueObj, TreeNode parent)
-        {
-            Type type = valueObj.GetType();
-
-            if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
-            {
-                // This is dictionary
-                var items = type.GetProperty("Keys", BindingFlags.Instance | BindingFlags.Public).GetValue(valueObj) as IEnumerable;
-                if (items == null) throw new ArgumentException("Dictionary with no keys?");
-                string[] keys = items.OfType<object>().Select(o => o.ToString()).ToArray();
-                IDictionary dict = valueObj as IDictionary;
-
-                foreach(string singleKey in keys)
-                {
-                    TreeNode child = new TreeNode(singleKey);
-                    child.Tag = dict[singleKey];
-                    parent.Nodes.Add(child);
-                    AddChildren(dict[singleKey], child);
-                }
-            }
-            else if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
-            {
-                // This is List
-                IList list = valueObj as IList;
-                for(int indx = 0; indx < list.Count; ++indx)
-                {
-                    TreeNode child = new TreeNode(indx.ToString());
-                    child.Tag = list[indx];
-                    parent.Nodes.Add(child);
-                }
-            }
         }
 
         private void OnSelectedNode(object sender, TreeViewEventArgs e)
@@ -89,7 +54,9 @@ namespace WinSysInfo.MiniFileParser.GUI
             listViewDetails.Items.Clear();
 
             EnumPEStructureId enumVal = (EnumPEStructureId)Enum.Parse(typeof(EnumPEStructureId), e.Node.Text);
-            object objData = e.Node.Tag;
+            object objData = loader.DataStore.FileData[enumVal];
+
+            if (objData == null) return;
 
             Type type = objData.GetType();
 

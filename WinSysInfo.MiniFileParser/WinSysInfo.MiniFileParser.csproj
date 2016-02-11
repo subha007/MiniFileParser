@@ -65,16 +65,8 @@
     <Compile Include="Interface\IFileReadStrategy.cs" />
     <Compile Include="Interface\IPECOFFFileReader.cs" />
     <Compile Include="Model\Class\COFF\COFFFileDataStore.cs" />
-    <Compile Include="Model\Class\COFF\OptionalHeaderDataDirImageOnlyLayoutModel.cs" />
     <Compile Include="Model\Class\FileDataStore.cs" />
-    <Compile Include="Model\Class\COFF\COFFFileHeaderLayoutModel.cs" />
-    <Compile Include="Model\Class\COFF\COFFSectionTableList.cs" />
-    <Compile Include="Model\Class\COFF\COFFSymbolTableLayoutModel.cs" />
     <Compile Include="Model\Class\COFF\LayoutModel.cs" />
-    <Compile Include="Model\Class\COFF\MSDOSStubLayoutModel.cs" />
-    <Compile Include="Model\Class\COFF\OptHeaderDataDirectoriesImageOnly.cs" />
-    <Compile Include="Model\Class\COFF\SymbolTableBigObjList.cs" />
-    <Compile Include="Model\Class\COFF\SymbolTableList.cs" />
     <Compile Include="Model\Class\ParentChildRelation.cs" />
     <Compile Include="Model\Enum\Common\EnumReaderBufferType.cs" />
     <Compile Include="Model\Enum\Common\EnumReaderType.cs" />
@@ -146,6 +138,9 @@
     <Compile Include="Process\Reader\MemoryRandomAccess.cs" />
     <Compile Include="Process\Reader\MemorySequentialAccess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helper\DS\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

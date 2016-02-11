@@ -24,12 +24,6 @@ namespace WinSysInfo.MiniFileParser.Model
         protected List<T1StructId> layoutOrder { get; set; }
         public IList LayoutOrder { get; set; }
 
-        /// <summary>
-        /// Store the parent child relationship
-        /// </summary>
-        protected Dictionary<T1StructId, StateNode<T1StructId>> parentChild;
-        public IDictionary ParentChild { get; set; }
-
         #endregion Properties
 
         #region Constructors
@@ -41,7 +35,6 @@ namespace WinSysInfo.MiniFileParser.Model
         {
             this.FileData = new Dictionary<T1StructId, object>();
             this.LayoutOrder = new List<T1StructId>();
-            this.ParentChild = new Dictionary<T1StructId, StateNode<T1StructId>>();
         }
 
         #endregion Constructors
@@ -88,7 +81,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <param name="enumVal"></param>
         /// <returns></returns>
         public void SetData<TStructId, TStruct>(TStructId enumVal, LayoutModel<TStruct> modelobj,
-            TStructId? enumParent = null, int position = -1)
+            int position = -1)
             where TStructId : struct
             where TStruct : struct
         {
@@ -108,11 +101,6 @@ namespace WinSysInfo.MiniFileParser.Model
                         this.LayoutOrder.Add(enumVal);
                 }
             }
-
-            if (enumParent != null && enumParent.HasValue == true)
-            {
-                SetRelation(enumVal, enumParent.Value);
-            }
         }
 
         /// <summary>
@@ -122,7 +110,7 @@ namespace WinSysInfo.MiniFileParser.Model
         /// <param name="enumVal"></param>
         /// <returns></returns>
         public void SetListData<TStructId, TStruct>(TStructId enumVal, List<LayoutModel<TStruct>> modelobjList,
-            TStructId? enumParent = null, int position = -1)
+            int position = -1)
             where TStructId : struct
             where TStruct : struct
         {
@@ -142,29 +130,6 @@ namespace WinSysInfo.MiniFileParser.Model
                         this.LayoutOrder.Add(enumVal);
                 }
             }
-
-            if (enumParent != null && enumParent.HasValue == true)
-            {
-                SetRelation(enumVal, enumParent.Value);
-            }
-        }
-
-        /// <summary>
-        /// Set the relationship of parent child
-        /// </summary>
-        /// <param name="enumId"></param>
-        /// <param name="enumParent"></param>
-        public void SetRelation<TStructId>(TStructId enumId, TStructId enumParent)
-        {
-            if (this.ParentChild.Contains(enumParent) == false)
-            {
-                StateNode<TStructId> nodeParent = new StateNode<TStructId>();
-                nodeParent.Id = enumParent;
-                this.ParentChild.Add(enumParent, nodeParent);
-            }
-
-            if (((StateNode<TStructId>)this.ParentChild[enumParent]).Children.Contains(enumId) == false)
-                ((StateNode<TStructId>)this.ParentChild[enumParent]).Children.Add(enumId);
         }
 
         /// <summary>
