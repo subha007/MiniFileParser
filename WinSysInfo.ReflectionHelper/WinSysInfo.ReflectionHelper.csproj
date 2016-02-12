@@ -39,12 +39,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Enum\EnumNETDataType.cs" />
+    <Compile Include="Model\Enum\EnumStructLayoutPack.cs" />
+    <Compile Include="Model\XmlMetadataFieldLayout.cs" />
+    <Compile Include="Model\XmlModelNamespaceRoot.cs" />
     <Compile Include="Model\XmlStructLayoutRoot.cs" />
+    <Compile Include="Model\XmlStructFieldLayout.cs" />
+    <Compile Include="Process\XmlSerializerProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factory\" />
-    <Folder Include="Process\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\FileParse\PECOFFDataStructures.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

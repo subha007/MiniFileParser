@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using WinSysInfo.MiniFileParser.Model;
 using WinSysInfo.MiniFileParser.Process;
 using System.Reflection;
-using System.Collections;
 
 namespace WinSysInfo.MiniFileParser.GUI
 {
