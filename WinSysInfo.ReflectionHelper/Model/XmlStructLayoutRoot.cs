@@ -36,7 +36,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// The list of public fields
         /// </summary>
         [XmlElement("Field")]
-        public XmlStructFieldLayout[] Properties;
+        public XmlStructFieldLayout[] Fields;
 
         #endregion Properties
 

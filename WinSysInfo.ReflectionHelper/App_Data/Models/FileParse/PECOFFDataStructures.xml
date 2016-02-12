@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Assembly file="COFFModel" version="1.0.0.0">
+  <Namespace name="WinSysInfo.PEFile">
+    <Struct name="MSDOSHeaderLayout">
+      <Field name="Magic" type="CHAR" isarray="true" unmanagedtype="ByValArray" sizeconst="2" >
+        <Metadata help="The MSDOS executable signature. The magic number. Usually its 'MZ'"/>
+      </Field>
+      <Field name="UsedBytesInTheLastPage" type="USHORT" >
+        <Metadata help="Number of bytes in last 512-byte page of executable" />
+      </Field>
+      <Field name="FileSizeInPages" type="USHORT" >
+        <Metadata help="Total number of 512-byte pages in executable (including the last page)" />
+      </Field>
+      <Field name="NumberOfRelocationItems" type="USHORT" >
+        <Metadata help="Number of relocation entries" />
+      </Field>
+      <Field name="HeaderSizeInParagraphs" type="USHORT" >
+        <Metadata help="Header size in paragraphs" />
+      </Field>
+      <Field name="MinimumExtraParagraphs" type="USHORT" >
+        <Metadata help="Minimum paragraphs of memory allocated in addition to the code size" />
+      </Field>
+      <Field name="MaximumExtraParagraphs" type="USHORT" >
+        <Metadata help="Maximum paragraphs of memory allocated in addition to the code size" />
+      </Field>
+      <Field name="InitialRelativeSS" type="USHORT" >
+        <Metadata help="Initial SS relative to start of executable" />
+      </Field>
+      <Field name="InitialSP" type="USHORT" >
+        <Metadata help="Initial SP" />
+      </Field>
+      <Field name="Checksum" type="USHORT" >
+        <Metadata help="Checksum (or 0) of executable" />
+      </Field>
+      <Field name="InitialIP" type="USHORT" >
+        <Metadata help="CS:IP relative to start of executable (entry point). Initial value of the IP register" />
+      </Field>
+      <Field name="InitialRelativeCS" type="USHORT" >
+        <Metadata help="Initial value of the CS register, relative to the segment the program was loaded at" />
+      </Field>
+      <Field name="AddressOfRelocationTable" type="USHORT" >
+        <Metadata help="Offset of relocation table; 40h for new-(NE,LE,LX,W3,PE etc.) executable" />
+      </Field>
+      <Field name="OverlayNumber" type="USHORT" >
+        <Metadata help="Overlay number (0h = main program)" />
+      </Field>
+      <Field name="Reserved" type="USHORT" isarray="true" sizeconst="4">
+        <Metadata help="Reserved words" />
+      </Field>
+      <Field name="OEMid" type="USHORT">
+        <Metadata help="OEM identifier for OEMinfo" />
+      </Field>
+      <Field name="OEMinfo" type="USHORT">
+        <Metadata help="OEM information" />
+      </Field>
+      <Field name="Reserved2" type="USHORT" isarray="true" sizeconst="10">
+        <Metadata help="Reserved words" />
+      </Field>
+      <Field name="AddressOfNewExeHeader" type="USHORT">
+        <Metadata help="Reserved words" />
+      </Field>
+    </Struct>
+  </Namespace>
+</Assembly>

@@ -7,7 +7,7 @@ namespace WinSysInfo.ReflectionHelper.Model
     /// The class which contains a list of all namespace objects
     /// </summary>
     [Serializable]
-    [XmlRoot("Assembly")]
+    [XmlRoot("Namespace")]
     public class XmlModelNamespaceRoot
     {
         #region Properties
@@ -15,14 +15,14 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// <summary>
         /// The .NET compatible namespace name
         /// </summary>
-        [XmlAttribute("namespace")]
+        [XmlAttribute("name")]
         public string Namespace { get; set; }
 
         /// <summary>
         /// List of structs
         /// </summary>
         [XmlElement("Struct")]
-        public XmlStructFieldLayout[] Structs;
+        public XmlStructLayoutRoot[] Structs;
 
         #endregion Properties
     }
