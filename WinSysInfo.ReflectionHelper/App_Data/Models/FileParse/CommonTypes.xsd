@@ -23,4 +23,24 @@
       <xs:enumeration value="STRING"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="packingStructSize">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unspecified"/>
+      <xs:enumeration value="Size1"/>
+      <xs:enumeration value="Size2"/>
+      <xs:enumeration value="Size4"/>
+      <xs:enumeration value="Size8"/>
+      <xs:enumeration value="Size16"/>
+      <xs:enumeration value="Size32"/>
+      <xs:enumeration value="Size64"/>
+      <xs:enumeration value="Size128"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="layoutKind">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Sequential"/>
+      <xs:enumeration value="Explicit"/>
+      <xs:enumeration value="Auto"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

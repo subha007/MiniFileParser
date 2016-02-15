@@ -49,7 +49,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// The meta information on the field
         /// </summary>
         [XmlElement("Metadata")]
-        public XmlMetadataFieldLayout Metadata { get; set; }
+        public XmlMetadataLayout Metadata { get; set; }
 
         #endregion Properties
 

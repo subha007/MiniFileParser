@@ -130,6 +130,15 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// <returns></returns>
         private void CreateRTNamespaceType(ModuleBuilder moduleBuilder, XmlModelNamespaceRoot xmlNamespace)
         {
+            // Foreach enum types
+            foreach (XmlEnumLayout xmlEnum in xmlNamespace.Enums)
+            {
+                EnumBuilder typeBuilder = CreateRTEnumType(moduleBuilder, xmlNamespace, xmlEnum);
+                var type = typeBuilder.CreateType();
+                if (type.IsValueType == false)
+                    throw new TypeAccessException("Some issue with creating value type");
+            }
+
             // Foreach structure types
             foreach(XmlStructLayoutRoot xmlStruct in xmlNamespace.Structs)
             {
@@ -138,6 +147,27 @@ namespace WinSysInfo.ReflectionHelper.Process
                 if (type.IsValueType == false)
                     throw new TypeAccessException("Some issue with creating value type");
             }
+        }
+
+        /// <summary>
+        /// Runtime enum type builder
+        /// </summary>
+        /// <param name="moduleBuilder"></param>
+        /// <param name="xmlNamespace"></param>
+        /// <param name="xmlEnum"></param>
+        /// <returns></returns>
+        private EnumBuilder CreateRTEnumType(ModuleBuilder moduleBuilder, XmlModelNamespaceRoot xmlNamespace, XmlEnumLayout xmlEnum)
+        {
+            EnumBuilder enumBuilder = moduleBuilder.DefineEnum(string.Format("{0}.{1}", xmlNamespace.Namespace, xmlEnum.Name),
+                        TypeAttributes.Public, FactoryStandardType.Get(xmlEnum.NetType));
+
+            // Foreach field
+            foreach (XmlEnumKeyValueLayout xmlkeyValue in xmlEnum.Keys)
+            {
+                enumBuilder.DefineLiteral(xmlkeyValue.Name, xmlkeyValue.Value);
+            }
+
+            return enumBuilder;
         }
 
         /// <summary>
@@ -173,17 +203,21 @@ namespace WinSysInfo.ReflectionHelper.Process
         {
             Type fieldType = null;
 
-            if (xmlField.IsArray)
-                fieldType = FactoryStandardType.Get(xmlField.NetType).MakeArrayType();
-            else
+            if (xmlField.NetType != EnumNETDataType.UNKNOWN)
                 fieldType = FactoryStandardType.Get(xmlField.NetType);
+
+            if (string.IsNullOrEmpty(xmlField.RefType) == false)
+                fieldType = FactoryStandardType.Get(xmlField.NetType);
+
+            if (xmlField.IsArray)
+                fieldType = fieldType.MakeArrayType();
 
             FieldBuilder fieldBuilder = typeBuilder.DefineField(
                             xmlField.Name,
                             fieldType,
                             FieldAttributes.Public);
 
-            if (xmlField.IsArray == true)
+            if (xmlField.CanMarshallAsStaticSize == true)
             {
                 CreateRTMarshalAsAttribute(xmlField, fieldBuilder);
             }

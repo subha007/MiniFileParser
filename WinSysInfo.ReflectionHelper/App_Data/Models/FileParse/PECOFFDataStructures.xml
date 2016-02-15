@@ -1,8 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Assembly file="WinSysInfo.PECOFFModel" version="1.0.0.0">
   <Namespace name="WinSysInfo.PECOFF.Model">
+    <Enum name="EnumCOFFHeaderMachineTypes" dtype="USHORT">
+      <Metadata description="The Machine field specifies its CPU type. An image file can be run only on the specified machine or on a system that emulates the specified machine" />
+      <Key name="IMAGE_FILE_MACHINE_UNKNOWN" value="0x0" >
+        <Metadata description="The contents of this field are assumed to be applicable to any machine type" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_AM33" value="0x1d3" >
+        <Metadata description="Matsushita AM33" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_AMD64" value="0x8664" >
+        <Metadata description="x64" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_ARM" value="0x1c0" >
+        <Metadata description="ARM little endian" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_ARMNT" value="0x1c4" >
+        <Metadata description="ARMv7 (or higher) Thumb mode only" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_ARM64" value="0xaa64" >
+        <Metadata description="ARMv8 in 64-bit mode" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_EBC" value="0xebc" >
+        <Metadata description="EFI byte code" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_I386" value="0x14c" >
+        <Metadata description="Intel 386 or later processors and compatible processors" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_IA64" value="0x200" >
+        <Metadata description="Intel Itanium processor family" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_M32R" value="0x9041" >
+        <Metadata description="Mitsubishi M32R little endian" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_MIPS16" value="0x266" >
+        <Metadata description="MIPS16" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_MIPSFPU" value="0x366" >
+        <Metadata description="MIPS with FPU" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_MIPSFPU16" value="0x466" >
+        <Metadata description="MIPS16 with FPU" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_POWERPC" value="0x1f0" >
+        <Metadata description="Power PC little endian" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_POWERPCFP" value="0x1f1" >
+        <Metadata description="Power PC with floating point support" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_R4000" value="0x166" >
+        <Metadata description="MIPS little endian" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_SH3" value="0x1a2" >
+        <Metadata description="Hitachi SH3" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_SH3DSP" value="0x1a3" >
+        <Metadata description="Hitachi SH3 DSP" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_SH4" value="0x1a6" >
+        <Metadata description="Hitachi SH4" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_SH5" value="0x1a8" >
+        <Metadata description="Hitachi SH5" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_THUMB" value="0x1c2" >
+        <Metadata description="ARM or Thumb (&quot;interworking&quot;)" />
+      </Key>
+      <Key name="IMAGE_FILE_MACHINE_WCEMIPSV2" value="0x169" >
+        <Metadata description="MIPS little-endian WCE v2" />
+      </Key>
+    </Enum>
     <Struct name="MSDOSHeaderLayout" structid="MSDOS_HEADER" kind="Sequential" pack="Size1">
-      <Metadata description="The MSDOS executable signature. The magic number. Usually its 'MZ'" displayname="Magic" />
+      <Metadata description="The MSDOS executable 64 bit header with the magic number." displayname="MS DOS Header" />
       <Field name="Magic" dtype="CHAR" isarray="true" unmanagedtype="ByValArray" sizeconst="2" >
         <Metadata description="The MSDOS executable signature. The magic number. Usually its 'MZ'" displayname="Magic" />
       </Field>
@@ -59,6 +128,24 @@
       </Field>
       <Field name="AddressOfNewExeHeader" dtype="USHORT">
         <Metadata description="Reserved words" />
+      </Field>
+    </Struct>
+    <Struct name="MSDOSStubLayout" structid="MSDOS_STUB" kind="Sequential" pack="Size1">
+      <Metadata description="A stub program is invoked if the file is executed in MS-DOS. It usually displays an appropriate message; however, any valid MS-DOS application can be a stub program" displayname="MS DOS Stub" />
+      <Field name="Stub" dtype="BYTE" isarray="true" isarraysizeknown="false">
+        <Metadata description="The DOS stub was also a part of the older 16-bit Windows EXE format (&quot;NE&quot; for &quot;New Executable&quot;)" displayname="DOS Stub" />
+      </Field>
+    </Struct>
+    <Struct name="NTHeaderLayout" structid="NT_HEADER" kind="Sequential" pack="Size1">
+      <Metadata description="After the MSDOS stub, at the file offset specified at offset 0x3c is a 4-byte signature that identifies the file" displayname="NT Header" />
+      <Field name="Signature" dtype="CHAR" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
+        <Metadata description="This signature is &quot;PE\0\0&quot; (the letters &quot;P&quot; and &quot;E&quot; followed by two null bytes)" />
+      </Field>
+    </Struct>
+    <Struct name="COFFFileHeader" structid="COFF_FILE_HEADER" kind="Sequential" pack="Size1">
+      <Metadata description="The main header of any PE file after the MS DOS sections" displayname="COFF File Header" />
+      <Field name="Machine" reftype="EnumCOFFHeaderMachineTypes" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
+        <Metadata description="This signature is &quot;PE\0\0&quot; (the letters &quot;P&quot; and &quot;E&quot; followed by two null bytes)" />
       </Field>
     </Struct>
   </Namespace>

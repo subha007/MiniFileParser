@@ -23,14 +23,27 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// <summary>
         /// The .NET Data Type
         /// </summary>
-        [XmlAttribute("type")]
+        [XmlAttribute("dtype")]
         public EnumNETDataType NetType { get; set; }
+
+        /// <summary>
+        /// Refer to dynamic Data Type (created dynamically)
+        /// </summary>
+        [XmlAttribute("reftype")]
+        public string RefType { get; set; }
 
         /// <summary>
         /// If the property is an Array
         /// </summary>
         [XmlAttribute("isarray")]
         public bool IsArray { get; set; }
+
+        /// <summary>
+        /// If the property is an Array and if the size of the array is known at the
+        /// beginning
+        /// </summary>
+        [XmlAttribute("isarraysizeknown")]
+        public bool CanMarshallAsStaticSize { get; set; }
 
         /// <summary>
         /// Identifies how to marshal parameters or fields to unmanaged code
@@ -56,7 +69,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// The meta information on the field
         /// </summary>
         [XmlElement("Metadata")]
-        public XmlMetadataFieldLayout Metadata { get; set; }
+        public XmlMetadataLayout Metadata { get; set; }
 
         #endregion Properties
 
@@ -70,8 +83,9 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// </remarks>
         public XmlStructFieldLayout()
         {
-            this.NetType = EnumNETDataType.INT;
+            this.NetType = EnumNETDataType.UNKNOWN;
             this.IsArray = false;
+            this.CanMarshallAsStaticSize = true;
             this.MarshalAsUnmanagedType = UnmanagedType.ByValArray;
             this.MarshalAsSizeConst = 1;
         }

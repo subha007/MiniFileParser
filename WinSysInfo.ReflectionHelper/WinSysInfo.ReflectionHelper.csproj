@@ -47,7 +47,9 @@
     <Compile Include="Model\EnumXmlFilePathType.cs" />
     <Compile Include="Model\Enum\EnumNETDataType.cs" />
     <Compile Include="Model\Enum\FIleData\EnumPECOFFStructType.cs" />
-    <Compile Include="Model\XmlMetadataFieldLayout.cs" />
+    <Compile Include="Model\XmlEnumKeyValueLayout.cs" />
+    <Compile Include="Model\XmlEnumLayout.cs" />
+    <Compile Include="Model\XmlMetadataLayout.cs" />
     <Compile Include="Model\XmlModelAssemblyRoot.cs" />
     <Compile Include="Model\XmlModelNamespaceRoot.cs" />
     <Compile Include="Model\XmlStructLayoutRoot.cs" />

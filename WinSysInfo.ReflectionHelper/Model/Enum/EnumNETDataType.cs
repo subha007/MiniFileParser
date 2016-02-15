@@ -7,6 +7,7 @@ namespace WinSysInfo.ReflectionHelper.Model
     [ComVisible(true)]
     public enum EnumNETDataType
     {
+        UNKNOWN = 0,
         BYTE = 1,
         SBYTE = 2,
         SHORT = 3,

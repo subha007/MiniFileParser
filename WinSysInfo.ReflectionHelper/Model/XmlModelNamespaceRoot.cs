@@ -24,6 +24,12 @@ namespace WinSysInfo.ReflectionHelper.Model
         [XmlElement("Struct")]
         public XmlStructLayoutRoot[] Structs;
 
+        /// <summary>
+        /// List of structs
+        /// </summary>
+        [XmlElement("Enum")]
+        public XmlEnumLayout[] Enums;
+
         #endregion Properties
     }
 }

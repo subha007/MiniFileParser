@@ -8,7 +8,7 @@ namespace WinSysInfo.ReflectionHelper.Model
     /// </summary>
     [Serializable]
     [XmlRoot("Metadata")]
-    public class XmlMetadataFieldLayout
+    public class XmlMetadataLayout
     {
         /// <summary>
         /// A resource name or non-localized text, such as a tool tip, 
