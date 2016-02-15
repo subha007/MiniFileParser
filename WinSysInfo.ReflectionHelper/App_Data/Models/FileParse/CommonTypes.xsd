@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="CommonTypes"
+    targetNamespace="http://winsysinfo.reflectionhelper.fileparse/CommonTypes.xsd"
+    elementFormDefault="qualified"
+    xmlns:common="http://winsysinfo.reflectionhelper.fileparse/CommonTypes.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:simpleType name="netDataType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BYTE"/>
+      <xs:enumeration value="SBYTE"/>
+      <xs:enumeration value="SHORT"/>
+      <xs:enumeration value="USHORT"/>
+      <xs:enumeration value="INT"/>
+      <xs:enumeration value="UINT"/>
+      <xs:enumeration value="LONG"/>
+      <xs:enumeration value="ULONG"/>
+      <xs:enumeration value="FLOAT"/>
+      <xs:enumeration value="DOUBLE"/>
+      <xs:enumeration value="DECIMAL"/>
+      <xs:enumeration value="CHAR"/>
+      <xs:enumeration value="BOOL"/>
+      <xs:enumeration value="STRING"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

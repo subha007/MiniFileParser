@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 
@@ -13,6 +14,12 @@ namespace WinSysInfo.ReflectionHelper.Model
     public class XmlStructLayoutRoot
     {
         #region Properties
+
+        /// <summary>
+        /// The type of structure id
+        /// </summary>
+        [XmlAttribute("structid")]
+        public EnumPECOFFStructType StructId { get; set; }
 
         /// <summary>
         /// Name of the struct in .NET
@@ -30,13 +37,19 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// Controls the alignment of data fields of a class or structure in memory
         /// </summary>
         [XmlAttribute("pack")]
-        public EnumStructLayoutPack Pack { get; set; }
+        public PackingSize Pack { get; set; }
 
         /// <summary>
         /// The list of public fields
         /// </summary>
         [XmlElement("Field")]
         public XmlStructFieldLayout[] Fields;
+
+        /// <summary>
+        /// The meta information on the field
+        /// </summary>
+        [XmlElement("Metadata")]
+        public XmlMetadataFieldLayout Metadata { get; set; }
 
         #endregion Properties
 
@@ -52,7 +65,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         public XmlStructLayoutRoot()
         {
             this.Kind = LayoutKind.Sequential;
-            this.Pack = EnumStructLayoutPack.Pack1;
+            this.Pack = PackingSize.Size1;
         }
 
         #endregion Constructor

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:common="http://winsysinfo.reflectionhelper.fileparse/CommonTypes.xsd"
+           xmlns:comelem="http://winsysinfo.reflectionhelper.fileparse/CommonElements.xsd">
+  
+  <xs:import schemaLocation="CommonTypes.xsd"
+           namespace="http://winsysinfo.reflectionhelper.fileparse/CommonTypes.xsd"/>
+  <xs:import schemaLocation="CommonElements.xsd"
+           namespace="http://winsysinfo.reflectionhelper.fileparse/CommonElements.xsd"/>
+  
+  <xs:element name="Assembly">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Namespace">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Struct">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Metadata" type="comelem:Metadata" />
+                    <xs:element maxOccurs="unbounded" name="Field">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Metadata" type="comelem:Metadata" />
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                        <xs:attribute name="dtype" type="common:netDataType" use="required" />
+                        <xs:attribute name="isarray" type="xs:boolean" use="optional" default="false" />
+                        <xs:attribute name="unmanagedtype" type="xs:string" use="optional" />
+                        <xs:attribute name="sizeconst" type="xs:unsignedByte" use="optional" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="structid" type="xs:string" use="optional" />
+                  <xs:attribute name="kind" type="xs:string" use="optional" />
+                  <xs:attribute name="pack" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="file" type="xs:string" use="required" />
+      <xs:attribute name="version" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

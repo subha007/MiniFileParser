@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>WinSysInfo.ReflectionHelper.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>WinSysInfo.ReflectionHelper.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,10 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CAttr\MetadataHelpAttribute.cs" />
     <Compile Include="Factory\FactoryFolderName.cs" />
+    <Compile Include="Factory\FactoryStandardType.cs" />
     <Compile Include="Model\EnumXmlFilePathType.cs" />
     <Compile Include="Model\Enum\EnumNETDataType.cs" />
-    <Compile Include="Model\Enum\EnumStructLayoutPack.cs" />
+    <Compile Include="Model\Enum\FIleData\EnumPECOFFStructType.cs" />
     <Compile Include="Model\XmlMetadataFieldLayout.cs" />
     <Compile Include="Model\XmlModelAssemblyRoot.cs" />
     <Compile Include="Model\XmlModelNamespaceRoot.cs" />
@@ -52,12 +56,25 @@
     <Compile Include="Process\XmlSerializerProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Data\Models\FileParse\CommonElements.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Data\Models\FileParse\CommonTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="App_Data\Models\FileParse\PECOFFDataStructures.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="App_Data\Models\FileParse\PECOFFDataStructures.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="WinSysInfo.ReflectionHelper.ruleset" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

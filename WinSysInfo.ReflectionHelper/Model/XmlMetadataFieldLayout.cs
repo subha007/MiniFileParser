@@ -11,9 +11,17 @@ namespace WinSysInfo.ReflectionHelper.Model
     public class XmlMetadataFieldLayout
     {
         /// <summary>
-        /// One liner help string on the field
+        /// A resource name or non-localized text, such as a tool tip, 
+        /// that is displayed to users to help them understand a member
         /// </summary>
-        [XmlAttribute("help")]
-        public string HelpString { get; set; }
+        [XmlAttribute("description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// A resource name or non-localized text that is used as a member 
+        /// label for elements that are bound to the member
+        /// </summary>
+        [XmlAttribute("displayname")]
+        public string DisplayName { get; set; }
     }
 }

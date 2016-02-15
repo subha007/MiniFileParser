@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using WinSysInfo.ReflectionHelper.Factory;
 using WinSysInfo.ReflectionHelper.Model;
+using WinSysInfo.ReflectionHelper.CAttr;
+using System.Collections.Generic;
 
 namespace WinSysInfo.ReflectionHelper.Process
 {
@@ -56,7 +56,7 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// <summary>
         /// Load the xml data
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="filePath"></param>
         private void LoadAssemblyXmlData(string filePath)
         {
             if (File.Exists(filePath) == false)
@@ -105,6 +105,7 @@ namespace WinSysInfo.ReflectionHelper.Process
             Version outVersion;
             if (Version.TryParse(this.XmlAssemblyData.Version, out outVersion) == false)
                 throw new InvalidDataException("unable to parse the Assembly Version data");
+            assemblyName.Version = outVersion;
 
             AssemblyBuilder assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
 
@@ -117,6 +118,8 @@ namespace WinSysInfo.ReflectionHelper.Process
             {
                 CreateRTNamespaceType(moduleBuilder, xmlNamespace);
             }
+
+            assemblyBuilder.Save(this.XmlAssemblyData.FileName + ".dll");
         }
 
         /// <summary>
@@ -131,6 +134,9 @@ namespace WinSysInfo.ReflectionHelper.Process
             foreach(XmlStructLayoutRoot xmlStruct in xmlNamespace.Structs)
             {
                 TypeBuilder typeBuilder = CreateRTStructType(moduleBuilder, xmlNamespace, xmlStruct);
+                var type = typeBuilder.CreateType();
+                if (type.IsValueType == false)
+                    throw new TypeAccessException("Some issue with creating value type");
             }
         }
 
@@ -144,8 +150,8 @@ namespace WinSysInfo.ReflectionHelper.Process
         private TypeBuilder CreateRTStructType(ModuleBuilder moduleBuilder, XmlModelNamespaceRoot xmlNamespace, XmlStructLayoutRoot xmlStruct)
         {
             TypeBuilder typeBuilder = moduleBuilder.DefineType(string.Format("{0}.{1}", xmlNamespace.Namespace, xmlStruct.Name),
-                        TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout | TypeAttributes.Serializable |
-                          TypeAttributes.AnsiClass, typeof(ValueType), (int)xmlStruct.Pack);
+                        TypeAttributes.Public | TypeAttributes.SequentialLayout | TypeAttributes.Serializable |
+                          TypeAttributes.AnsiClass, typeof(ValueType), xmlStruct.Pack);
 
             // Foreach field
             foreach (XmlStructFieldLayout xmlField in xmlStruct.Fields)
@@ -165,7 +171,83 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// <returns></returns>
         private FieldBuilder CreateRTFieldType(TypeBuilder typeBuilder, XmlStructLayoutRoot xmlStruct, XmlStructFieldLayout xmlField)
         {
-            throw new NotImplementedException();
+            Type fieldType = null;
+
+            if (xmlField.IsArray)
+                fieldType = FactoryStandardType.Get(xmlField.NetType).MakeArrayType();
+            else
+                fieldType = FactoryStandardType.Get(xmlField.NetType);
+
+            FieldBuilder fieldBuilder = typeBuilder.DefineField(
+                            xmlField.Name,
+                            fieldType,
+                            FieldAttributes.Public);
+
+            if (xmlField.IsArray == true)
+            {
+                CreateRTMarshalAsAttribute(xmlField, fieldBuilder);
+            }
+
+            if(xmlField.Metadata != null)
+            {
+                CreateRTMetadataAttribute(xmlField, fieldBuilder);
+            }
+
+            return fieldBuilder;
+        }
+
+        /// <summary>
+        /// Add MarshalAs attribute
+        /// </summary>
+        /// <param name="xmlField"></param>
+        /// <param name="fieldBuilder"></param>
+        private void CreateRTMarshalAsAttribute(XmlStructFieldLayout xmlField, FieldBuilder fieldBuilder)
+        {
+            // Find MarshalAsAttribute's constructor by signature, then invoke
+            var ctorParameters = new Type[] { typeof(UnmanagedType) };
+            var ctorInfo = typeof(MarshalAsAttribute).GetConstructor(ctorParameters);
+
+            var fields = typeof(MarshalAsAttribute).GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var sizeConst = (from f in fields
+                             where f.Name == "SizeConst"
+                             select f).ToArray();
+            var marshalAsAttr = new CustomAttributeBuilder(ctorInfo,
+                new object[] { xmlField.MarshalAsUnmanagedType }, sizeConst, new object[] { xmlField.MarshalAsSizeConst });
+
+            fieldBuilder.SetCustomAttribute(marshalAsAttr);
+        }
+
+        /// <summary>
+        /// Add Metadata attribute
+        /// </summary>
+        /// <param name="xmlField"></param>
+        /// <param name="fieldBuilder"></param>
+        private void CreateRTMetadataAttribute(XmlStructFieldLayout xmlField, FieldBuilder fieldBuilder)
+        {
+            // Find MarshalAsAttribute's constructor by signature, then invoke
+            var metadataType = typeof(MetadataHelpAttribute);
+            var ctorInfo = metadataType.GetConstructor(Type.EmptyTypes);
+
+            List<PropertyInfo> lstPropInfo = new List<PropertyInfo>();
+            List<object> lstPropValues = new List<object>();
+            if(string.IsNullOrEmpty(xmlField.Metadata.Description) == false)
+            {
+                lstPropInfo.Add(metadataType.GetProperty("Description"));
+                lstPropValues.Add(xmlField.Metadata.Description);
+            }
+            if (string.IsNullOrEmpty(xmlField.Metadata.DisplayName) == false)
+            {
+                lstPropInfo.Add(metadataType.GetProperty("DisplayName"));
+                lstPropValues.Add(xmlField.Metadata.DisplayName);
+            }
+
+            var fields = metadataType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var marshalAsAttr = new CustomAttributeBuilder(ctorInfo,
+                new object[] { },
+                lstPropInfo.ToArray(),
+                lstPropValues.ToArray());
+
+            fieldBuilder.SetCustomAttribute(marshalAsAttr);
         }
 
         #endregion Methods

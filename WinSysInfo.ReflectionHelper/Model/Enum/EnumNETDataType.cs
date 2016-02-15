@@ -20,7 +20,6 @@ namespace WinSysInfo.ReflectionHelper.Model
         DECIMAL = 11,
         CHAR = 12,
         BOOL = 13,
-        STRING = 14,
-        OBJECT = 15
+        STRING = 14
     }
 }
