@@ -107,11 +107,11 @@ namespace WinSysInfo.ReflectionHelper.Process
                 throw new InvalidDataException("unable to parse the Assembly Version data");
             assemblyName.Version = outVersion;
 
-            AssemblyBuilder assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
+            RTAssemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
 
             // For a single-module assembly, the module name is usually
             // the assembly name plus an extension.
-            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(this.XmlAssemblyData.FileName + ".dll");
+            ModuleBuilder moduleBuilder = RTAssemblyBuilder.DefineDynamicModule(this.XmlAssemblyData.FileName + ".dll");
 
             // foreach namespace create type
             foreach(XmlModelNamespaceRoot xmlNamespace in this.XmlAssemblyData.Namespaces)
@@ -119,7 +119,7 @@ namespace WinSysInfo.ReflectionHelper.Process
                 CreateRTNamespaceType(moduleBuilder, xmlNamespace);
             }
 
-            assemblyBuilder.Save(this.XmlAssemblyData.FileName + ".dll");
+            RTAssemblyBuilder.Save(this.XmlAssemblyData.FileName + ".dll");
         }
 
         /// <summary>
@@ -158,13 +158,17 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// <returns></returns>
         private EnumBuilder CreateRTEnumType(ModuleBuilder moduleBuilder, XmlModelNamespaceRoot xmlNamespace, XmlEnumLayout xmlEnum)
         {
+            Type enumType = FactoryStandardType.Get(xmlEnum.NetType);
             EnumBuilder enumBuilder = moduleBuilder.DefineEnum(string.Format("{0}.{1}", xmlNamespace.Namespace, xmlEnum.Name),
-                        TypeAttributes.Public, FactoryStandardType.Get(xmlEnum.NetType));
+                        TypeAttributes.Public, enumType);
 
             // Foreach field
             foreach (XmlEnumKeyValueLayout xmlkeyValue in xmlEnum.Keys)
             {
-                enumBuilder.DefineLiteral(xmlkeyValue.Name, xmlkeyValue.Value);
+                if (FactoryStandardType.IsNumericTypes(xmlEnum.NetType))
+                {
+                    enumBuilder.DefineLiteral(xmlkeyValue.Name, FactoryStandardType.ConvertToNumeric(xmlEnum.NetType, xmlkeyValue.Value, xmlEnum.NumberBase));
+                }
             }
 
             return enumBuilder;
@@ -183,6 +187,11 @@ namespace WinSysInfo.ReflectionHelper.Process
                         TypeAttributes.Public | TypeAttributes.SequentialLayout | TypeAttributes.Serializable |
                           TypeAttributes.AnsiClass, typeof(ValueType), xmlStruct.Pack);
 
+            if (xmlStruct.Metadata != null)
+            {
+                CreateRTMetadataAttribute(xmlStruct, typeBuilder);
+            }
+            
             // Foreach field
             foreach (XmlStructFieldLayout xmlField in xmlStruct.Fields)
             {
@@ -190,6 +199,39 @@ namespace WinSysInfo.ReflectionHelper.Process
             }
 
             return typeBuilder;
+        }
+
+        /// <summary>
+        /// Create the metadata attribute
+        /// </summary>
+        /// <param name="xmlStruct"></param>
+        /// <param name="typeBuilder"></param>
+        private void CreateRTMetadataAttribute(XmlStructLayoutRoot xmlStruct, TypeBuilder typeBuilder)
+        {
+            // Find MarshalAsAttribute's constructor by signature, then invoke
+            var metadataType = typeof(MetadataHelpAttribute);
+            var ctorInfo = metadataType.GetConstructor(Type.EmptyTypes);
+
+            List<PropertyInfo> lstPropInfo = new List<PropertyInfo>();
+            List<object> lstPropValues = new List<object>();
+            if (string.IsNullOrEmpty(xmlStruct.Metadata.Description) == false)
+            {
+                lstPropInfo.Add(metadataType.GetProperty("Description"));
+                lstPropValues.Add(xmlStruct.Metadata.Description);
+            }
+            if (string.IsNullOrEmpty(xmlStruct.Metadata.DisplayName) == false)
+            {
+                lstPropInfo.Add(metadataType.GetProperty("DisplayName"));
+                lstPropValues.Add(xmlStruct.Metadata.DisplayName);
+            }
+
+            var fields = metadataType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var marshalAsAttr = new CustomAttributeBuilder(ctorInfo,
+                new object[] { },
+                lstPropInfo.ToArray(),
+                lstPropValues.ToArray());
+
+            typeBuilder.SetCustomAttribute(marshalAsAttr);
         }
 
         /// <summary>
@@ -203,11 +245,14 @@ namespace WinSysInfo.ReflectionHelper.Process
         {
             Type fieldType = null;
 
-            if (xmlField.NetType != EnumNETDataType.UNKNOWN)
+            if (xmlField.NetType != TypeCode.Empty)
                 fieldType = FactoryStandardType.Get(xmlField.NetType);
 
             if (string.IsNullOrEmpty(xmlField.RefType) == false)
-                fieldType = FactoryStandardType.Get(xmlField.NetType);
+            {
+                // Find the type from current assembly
+                fieldType = RTAssemblyBuilder.GetType(xmlField.RefType, true);
+            }
 
             if (xmlField.IsArray)
                 fieldType = fieldType.MakeArrayType();

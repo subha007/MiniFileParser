@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Assembly file="WinSysInfo.PECOFFModel" version="1.0.0.0">
   <Namespace name="WinSysInfo.PECOFF.Model">
-    <Enum name="EnumCOFFHeaderMachineTypes" dtype="USHORT">
+    <Enum name="EnumCOFFHeaderMachineTypes" dtype="UInt16" numbase="16">
       <Metadata description="The Machine field specifies its CPU type. An image file can be run only on the specified machine or on a system that emulates the specified machine" />
       <Key name="IMAGE_FILE_MACHINE_UNKNOWN" value="0x0" >
         <Metadata description="The contents of this field are assumed to be applicable to any machine type" />
@@ -72,79 +72,79 @@
     </Enum>
     <Struct name="MSDOSHeaderLayout" structid="MSDOS_HEADER" kind="Sequential" pack="Size1">
       <Metadata description="The MSDOS executable 64 bit header with the magic number." displayname="MS DOS Header" />
-      <Field name="Magic" dtype="CHAR" isarray="true" unmanagedtype="ByValArray" sizeconst="2" >
+      <Field name="Magic" dtype="Char" isarray="true" unmanagedtype="ByValArray" sizeconst="2" >
         <Metadata description="The MSDOS executable signature. The magic number. Usually its 'MZ'" displayname="Magic" />
       </Field>
-      <Field name="UsedBytesInTheLastPage" dtype="USHORT" >
+      <Field name="UsedBytesInTheLastPage" dtype="UInt16" >
         <Metadata description="Number of bytes in last 512-byte page of executable" />
       </Field>
-      <Field name="FileSizeInPages" dtype="USHORT" >
+      <Field name="FileSizeInPages" dtype="UInt16" >
         <Metadata description="Total number of 512-byte pages in executable (including the last page)" />
       </Field>
-      <Field name="NumberOfRelocationItems" dtype="USHORT" >
+      <Field name="NumberOfRelocationItems" dtype="UInt16" >
         <Metadata description="Number of relocation entries" />
       </Field>
-      <Field name="HeaderSizeInParagraphs" dtype="USHORT" >
+      <Field name="HeaderSizeInParagraphs" dtype="UInt16" >
         <Metadata description="Header size in paragraphs" />
       </Field>
-      <Field name="MinimumExtraParagraphs" dtype="USHORT" >
+      <Field name="MinimumExtraParagraphs" dtype="UInt16" >
         <Metadata description="Minimum paragraphs of memory allocated in addition to the code size" />
       </Field>
-      <Field name="MaximumExtraParagraphs" dtype="USHORT" >
+      <Field name="MaximumExtraParagraphs" dtype="UInt16" >
         <Metadata description="Maximum paragraphs of memory allocated in addition to the code size" />
       </Field>
-      <Field name="InitialRelativeSS" dtype="USHORT" >
+      <Field name="InitialRelativeSS" dtype="UInt16" >
         <Metadata description="Initial SS relative to start of executable" />
       </Field>
-      <Field name="InitialSP" dtype="USHORT" >
+      <Field name="InitialSP" dtype="UInt16" >
         <Metadata description="Initial SP" />
       </Field>
-      <Field name="Checksum" dtype="USHORT" >
+      <Field name="Checksum" dtype="UInt16" >
         <Metadata description="Checksum (or 0) of executable" />
       </Field>
-      <Field name="InitialIP" dtype="USHORT" >
+      <Field name="InitialIP" dtype="UInt16" >
         <Metadata description="CS:IP relative to start of executable (entry point). Initial value of the IP register" />
       </Field>
-      <Field name="InitialRelativeCS" dtype="USHORT" >
+      <Field name="InitialRelativeCS" dtype="UInt16" >
         <Metadata description="Initial value of the CS register, relative to the segment the program was loaded at" />
       </Field>
-      <Field name="AddressOfRelocationTable" dtype="USHORT" >
+      <Field name="AddressOfRelocationTable" dtype="UInt16" >
         <Metadata description="Offset of relocation table; 40h for new-(NE,LE,LX,W3,PE etc.) executable" />
       </Field>
-      <Field name="OverlayNumber" dtype="USHORT" >
+      <Field name="OverlayNumber" dtype="UInt16" >
         <Metadata description="Overlay number (0h = main program)" />
       </Field>
-      <Field name="Reserved" dtype="USHORT" isarray="true" sizeconst="4">
+      <Field name="Reserved" dtype="UInt16" isarray="true" sizeconst="4">
         <Metadata description="Reserved words" />
       </Field>
-      <Field name="OEMid" dtype="USHORT">
+      <Field name="OEMid" dtype="UInt16">
         <Metadata description="OEM identifier for OEMinfo" />
       </Field>
-      <Field name="OEMinfo" dtype="USHORT">
+      <Field name="OEMinfo" dtype="UInt16">
         <Metadata description="OEM information" />
       </Field>
-      <Field name="Reserved2" dtype="USHORT" isarray="true" sizeconst="10">
+      <Field name="Reserved2" dtype="UInt16" isarray="true" sizeconst="10">
         <Metadata description="Reserved words" />
       </Field>
-      <Field name="AddressOfNewExeHeader" dtype="USHORT">
+      <Field name="AddressOfNewExeHeader" dtype="UInt16">
         <Metadata description="Reserved words" />
       </Field>
     </Struct>
     <Struct name="MSDOSStubLayout" structid="MSDOS_STUB" kind="Sequential" pack="Size1">
       <Metadata description="A stub program is invoked if the file is executed in MS-DOS. It usually displays an appropriate message; however, any valid MS-DOS application can be a stub program" displayname="MS DOS Stub" />
-      <Field name="Stub" dtype="BYTE" isarray="true" isarraysizeknown="false">
+      <Field name="Stub" dtype="Byte" isarray="true" isarraysizeknown="false">
         <Metadata description="The DOS stub was also a part of the older 16-bit Windows EXE format (&quot;NE&quot; for &quot;New Executable&quot;)" displayname="DOS Stub" />
       </Field>
     </Struct>
     <Struct name="NTHeaderLayout" structid="NT_HEADER" kind="Sequential" pack="Size1">
       <Metadata description="After the MSDOS stub, at the file offset specified at offset 0x3c is a 4-byte signature that identifies the file" displayname="NT Header" />
-      <Field name="Signature" dtype="CHAR" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
+      <Field name="Signature" dtype="Char" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
         <Metadata description="This signature is &quot;PE\0\0&quot; (the letters &quot;P&quot; and &quot;E&quot; followed by two null bytes)" />
       </Field>
     </Struct>
     <Struct name="COFFFileHeader" structid="COFF_FILE_HEADER" kind="Sequential" pack="Size1">
       <Metadata description="The main header of any PE file after the MS DOS sections" displayname="COFF File Header" />
-      <Field name="Machine" reftype="EnumCOFFHeaderMachineTypes" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
+      <Field name="Machine" reftype="WinSysInfo.PECOFF.Model.EnumCOFFHeaderMachineTypes" isarray="true" unmanagedtype="ByValArray" sizeconst="4">
         <Metadata description="This signature is &quot;PE\0\0&quot; (the letters &quot;P&quot; and &quot;E&quot; followed by two null bytes)" />
       </Field>
     </Struct>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,13 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// The .NET Data Type
         /// </summary>
         [XmlAttribute("dtype")]
-        public EnumNETDataType NetType { get; set; }
+        public TypeCode NetType { get; set; }
+
+        /// <summary>
+        /// The format of the value
+        /// </summary>
+        [XmlAttribute("numbase")]
+        public int NumberBase;
 
         /// <summary>
         /// The list of public fields

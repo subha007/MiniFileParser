@@ -7,20 +7,23 @@
 >
   <xs:simpleType name="netDataType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="BYTE"/>
-      <xs:enumeration value="SBYTE"/>
-      <xs:enumeration value="SHORT"/>
-      <xs:enumeration value="USHORT"/>
-      <xs:enumeration value="INT"/>
-      <xs:enumeration value="UINT"/>
-      <xs:enumeration value="LONG"/>
-      <xs:enumeration value="ULONG"/>
-      <xs:enumeration value="FLOAT"/>
-      <xs:enumeration value="DOUBLE"/>
-      <xs:enumeration value="DECIMAL"/>
-      <xs:enumeration value="CHAR"/>
-      <xs:enumeration value="BOOL"/>
-      <xs:enumeration value="STRING"/>
+      <xs:enumeration value="Empty"/>
+      <xs:enumeration value="Object"/>
+      <xs:enumeration value="DBNull"/>
+      <xs:enumeration value="Boolean"/>
+      <xs:enumeration value="Char"/>
+      <xs:enumeration value="SByte"/>
+      <xs:enumeration value="Byte"/>
+      <xs:enumeration value="Int16"/>
+      <xs:enumeration value="UInt16"/>
+      <xs:enumeration value="Int32"/>
+      <xs:enumeration value="UInt32"/>
+      <xs:enumeration value="Int64"/>
+      <xs:enumeration value="UInt64"/>
+      <xs:enumeration value="Double"/>
+      <xs:enumeration value="Decimal"/>
+      <xs:enumeration value="DateTime"/>
+      <xs:enumeration value="String"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="packingStructSize">
@@ -41,6 +44,26 @@
       <xs:enumeration value="Sequential"/>
       <xs:enumeration value="Explicit"/>
       <xs:enumeration value="Auto"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="numberStyles">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None"/>
+      <xs:enumeration value="AllowLeadingWhite"/>
+      <xs:enumeration value="AllowLeadingSign"/>
+      <xs:enumeration value="Integer"/>
+      <xs:enumeration value="AllowTrailingSign"/>
+      <xs:enumeration value="AllowParentheses"/>
+      <xs:enumeration value="AllowDecimalPoint"/>
+      <xs:enumeration value="AllowThousands"/>
+      <xs:enumeration value="Number"/>
+      <xs:enumeration value="AllowExponent"/>
+      <xs:enumeration value="Float"/>
+      <xs:enumeration value="AllowCurrencySymbol"/>
+      <xs:enumeration value="Currency"/>
+      <xs:enumeration value="Any"/>
+      <xs:enumeration value="AllowHexSpecifier"/>
+      <xs:enumeration value="HexNumber"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

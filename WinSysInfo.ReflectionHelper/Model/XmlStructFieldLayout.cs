@@ -24,7 +24,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// The .NET Data Type
         /// </summary>
         [XmlAttribute("dtype")]
-        public EnumNETDataType NetType { get; set; }
+        public TypeCode NetType { get; set; }
 
         /// <summary>
         /// Refer to dynamic Data Type (created dynamically)
@@ -83,7 +83,7 @@ namespace WinSysInfo.ReflectionHelper.Model
         /// </remarks>
         public XmlStructFieldLayout()
         {
-            this.NetType = EnumNETDataType.UNKNOWN;
+            this.NetType = TypeCode.Empty;
             this.IsArray = false;
             this.CanMarshallAsStaticSize = true;
             this.MarshalAsUnmanagedType = UnmanagedType.ByValArray;

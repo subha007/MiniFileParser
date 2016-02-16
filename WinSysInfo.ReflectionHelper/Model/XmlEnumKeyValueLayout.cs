@@ -29,6 +29,12 @@ namespace WinSysInfo.ReflectionHelper.Model
         [XmlAttribute("value")]
         public string Value { get; set; }
 
+        /// <summary>
+        /// The meta information on the field
+        /// </summary>
+        [XmlElement("Metadata")]
+        public XmlMetadataLayout Metadata { get; set; }
+
         #endregion Properties
     }
 }
