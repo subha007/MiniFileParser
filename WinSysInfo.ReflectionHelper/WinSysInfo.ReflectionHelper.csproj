@@ -44,17 +44,17 @@
     <Compile Include="CAttr\MetadataHelpAttribute.cs" />
     <Compile Include="Factory\FactoryFolderName.cs" />
     <Compile Include="Factory\FactoryStandardType.cs" />
-    <Compile Include="Model\EnumXmlFilePathType.cs" />
+    <Compile Include="Model\Enum\EnumXmlFilePathType.cs" />
     <Compile Include="Model\Enum\EnumNETDataType.cs" />
     <Compile Include="Model\Enum\FIleData\EnumPECOFFStructType.cs" />
-    <Compile Include="Model\XmlEnumKeyValueLayout.cs" />
-    <Compile Include="Model\XmlEnumLayout.cs" />
-    <Compile Include="Model\XmlMetadataLayout.cs" />
-    <Compile Include="Model\XmlModelAssemblyRoot.cs" />
-    <Compile Include="Model\XmlModelNamespaceRoot.cs" />
-    <Compile Include="Model\XmlStructLayoutRoot.cs" />
-    <Compile Include="Model\XmlStructFieldLayout.cs" />
-    <Compile Include="Process\RuntimeAssemblyProcess.cs" />
+    <Compile Include="Model\Xml\XmlEnumKeyValueLayout.cs" />
+    <Compile Include="Model\Xml\XmlEnumLayout.cs" />
+    <Compile Include="Model\Xml\XmlMetadataLayout.cs" />
+    <Compile Include="Model\Xml\XmlModelAssemblyRoot.cs" />
+    <Compile Include="Model\Xml\XmlModelNamespaceRoot.cs" />
+    <Compile Include="Model\Xml\XmlStructLayoutRoot.cs" />
+    <Compile Include="Model\Xml\XmlStructFieldLayout.cs" />
+    <Compile Include="Process\GenerateRuntimeAssembly.cs" />
     <Compile Include="Process\XmlSerializerProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -76,7 +76,12 @@
     </None>
     <None Include="WinSysInfo.ReflectionHelper.ruleset" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interface\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\Models\FileParse\PECOFFRuleEngine.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

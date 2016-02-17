@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Parse>
+  <Read id="MSDOS_HEADER">
+    <Validation>
+
+    </Validation>
+  </Read>
+</Parse>

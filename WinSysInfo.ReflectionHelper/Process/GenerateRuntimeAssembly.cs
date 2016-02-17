@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace WinSysInfo.ReflectionHelper.Process
 {
-    public class RuntimeAssemblyProcess
+    public class GenerateRuntimeAssembly
     {
         #region Properties
 
@@ -34,7 +34,7 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// Create object with the Xml data as reference
         /// </summary>
         /// <param name="xmlData"></param>
-        public RuntimeAssemblyProcess(XmlModelAssemblyRoot xmlData)
+        public GenerateRuntimeAssembly(XmlModelAssemblyRoot xmlData)
         {
             this.XmlAssemblyData = xmlData;
         }
@@ -44,7 +44,7 @@ namespace WinSysInfo.ReflectionHelper.Process
         /// </summary>
         /// <param name="xmlFile"></param>
         /// <param name="pathType"></param>
-        public RuntimeAssemblyProcess(string xmlFile, EnumXmlFilePathType pathType)
+        public GenerateRuntimeAssembly(string xmlFile, EnumXmlFilePathType pathType)
         {
             LoadAssemblyXmlData(ConstructXmlFilePath(xmlFile, pathType));
         }

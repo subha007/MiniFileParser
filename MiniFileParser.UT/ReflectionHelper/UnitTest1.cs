@@ -10,7 +10,7 @@ namespace MiniFileParser.UT.ReflectionHelper
         [TestMethod]
         public void TestMethod1()
         {
-            RuntimeAssemblyProcess assemblyProc = new RuntimeAssemblyProcess("PECOFFDataStructures.xml", EnumXmlFilePathType.FILE_PARSE);
+            GenerateRuntimeAssembly assemblyProc = new GenerateRuntimeAssembly("PECOFFDataStructures.xml", EnumXmlFilePathType.FILE_PARSE);
             assemblyProc.Create();
         }
     }

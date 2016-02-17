@@ -12,10 +12,10 @@
   <xs:element name="Assembly">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="Namespace">
+        <xs:element name="Namespace" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Enum">
+              <xs:element name="Enum" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="Metadata" type="comelem:Metadata" />
@@ -30,13 +30,11 @@
                     </xs:element>
                   </xs:sequence>
                   <xs:attribute name="name" type="xs:string" use="required" />
-                  <xs:attribute name="structid" type="xs:string" use="optional" />
+                  <xs:attribute name="dtype" type="common:netDataType" use="optional" />
                   <xs:attribute name="numbase" type="xs:int" use="optional" />
-                  <xs:attribute name="kind" type="common:layoutKind" use="optional" default="Sequential" />
-                  <xs:attribute name="pack" type="common:packingStructSize" use="optional" default="Size1" />
                 </xs:complexType>
               </xs:element>
-              <xs:element name="Struct">
+              <xs:element name="Struct" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="Metadata" type="comelem:Metadata" />

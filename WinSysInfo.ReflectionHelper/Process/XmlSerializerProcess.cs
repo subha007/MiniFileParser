@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace WinSysInfo.ReflectionHelper.Process
 {
     /// <summary>
-    /// The class is used to read an xml file into a dataset
+    /// Reads an xml file into a dataset
     /// </summary>
     public class XmlSerializerProcess
     {
